@@ -1,0 +1,73 @@
+{
+  "name": "islamic-quiz-mobile",
+  "version": "1.0.0",
+  "description": "Islamic Quiz Card Game Mobile App",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rimraf platforms plugins www",
+    "setup": "npm run clean && cordova platform add android ios",
+    "build": "npm run build:web && npm run copy:assets && cordova build",
+    "build:android": "npm run build:web && npm run copy:assets && cordova build android",
+    "build:ios": "npm run build:web && npm run copy:assets && cordova build ios",
+    "build:android:release": "npm run build:web && npm run copy:assets && cordova build android --release",
+    "build:ios:release": "npm run build:web && npm run copy:assets && cordova build ios --release",
+    "build:web": "cd .. && npm run build",
+    "copy:assets": "node scripts/copy-assets.js",
+    "serve": "cordova serve",
+    "emulate:android": "cordova emulate android",
+    "emulate:ios": "cordova emulate ios",
+    "run:android": "cordova run android",
+    "run:ios": "cordova run ios",
+    "device:android": "cordova run android --device",
+    "device:ios": "cordova run ios --device",
+    "prepare": "cordova prepare",
+    "requirements": "cordova requirements",
+    "info": "cordova info",
+    "plugin:add": "cordova plugin add",
+    "plugin:remove": "cordova plugin remove",
+    "platform:add": "cordova platform add",
+    "platform:remove": "cordova platform remove"
+  },
+  "keywords": [
+    "islamic",
+    "quiz",
+    "card-game",
+    "mobile",
+    "cordova",
+    "android",
+    "ios"
+  ],
+  "author": "Ummah360",
+  "license": "MIT",
+  "devDependencies": {
+    "cordova": "^12.0.0",
+    "cordova-android": "^12.0.1",
+    "cordova-ios": "^7.0.1",
+    "fs-extra": "^11.1.1",
+    "rimraf": "^5.0.5"
+  },
+  "cordova": {
+    "platforms": [
+      "android",
+      "ios"
+    ],
+    "plugins": {
+      "cordova-plugin-whitelist": {},
+      "cordova-plugin-device": {},
+      "cordova-plugin-network-information": {},
+      "cordova-plugin-splashscreen": {},
+      "cordova-plugin-statusbar": {},
+      "cordova-plugin-vibration": {},
+      "cordova-plugin-screen-orientation": {},
+      "cordova-plugin-wkwebview-engine": {},
+      "cordova-plugin-ionic-webview": {},
+      "cordova-plugin-app-version": {},
+      "cordova-plugin-dialogs": {},
+      "cordova-plugin-inappbrowser": {}
+    }
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}

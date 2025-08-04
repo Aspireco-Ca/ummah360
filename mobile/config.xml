@@ -1,0 +1,221 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.ummah360.islamicquiz" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Islamic Quiz Card Game</name>
+    <description>
+        Multiplayer Islamic Quiz Card Game - Test your Islamic knowledge through engaging gameplay
+    </description>
+    <author email="support@ummah360.com" href="https://ummah360.com">
+        Ummah360 Team
+    </author>
+    
+    <content src="index.html" />
+    
+    <access origin="*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+    
+    <!-- Global preferences -->
+    <preference name="webviewbounce" value="false" />
+    <preference name="UIWebViewBounce" value="false" />
+    <preference name="DisallowOverscroll" value="true" />
+    <preference name="android-minSdkVersion" value="22" />
+    <preference name="android-targetSdkVersion" value="33" />
+    <preference name="BackupWebStorage" value="none" />
+    <preference name="SplashMaintainAspectRatio" value="true" />
+    <preference name="FadeSplashScreenDuration" value="300" />
+    <preference name="SplashShowOnlyFirstTime" value="false" />
+    <preference name="SplashScreen" value="screen" />
+    <preference name="SplashScreenDelay" value="3000" />
+    <preference name="AutoHideSplashScreen" value="false" />
+    <preference name="ShowSplashScreenSpinner" value="false" />
+    
+    <!-- Performance and Memory -->
+    <preference name="WKWebViewOnly" value="true" />
+    <preference name="CordovaWebViewEngine" value="CDVWKWebView" />
+    <preference name="WKSuspendInBackground" value="false" />
+    <preference name="WKWebViewDecelerationSpeed" value="normal" />
+    
+    <!-- Network Security -->
+    <preference name="scheme" value="https" />
+    <preference name="hostname" value="localhost" />
+    
+    <!-- Platform specific configurations -->
+    
+    <!-- Android specific -->
+    <platform name="android">
+        <allow-intent href="market:*" />
+        
+        <!-- App icons -->
+        <icon density="ldpi" src="res/android/icon/drawable-ldpi-icon.png" />
+        <icon density="mdpi" src="res/android/icon/drawable-mdpi-icon.png" />
+        <icon density="hdpi" src="res/android/icon/drawable-hdpi-icon.png" />
+        <icon density="xhdpi" src="res/android/icon/drawable-xhdpi-icon.png" />
+        <icon density="xxhdpi" src="res/android/icon/drawable-xxhdpi-icon.png" />
+        <icon density="xxxhdpi" src="res/android/icon/drawable-xxxhdpi-icon.png" />
+        
+        <!-- Splash screens -->
+        <splash density="land-ldpi" src="res/android/splash/drawable-land-ldpi-screen.png" />
+        <splash density="land-mdpi" src="res/android/splash/drawable-land-mdpi-screen.png" />
+        <splash density="land-hdpi" src="res/android/splash/drawable-land-hdpi-screen.png" />
+        <splash density="land-xhdpi" src="res/android/splash/drawable-land-xhdpi-screen.png" />
+        <splash density="land-xxhdpi" src="res/android/splash/drawable-land-xxhdpi-screen.png" />
+        <splash density="land-xxxhdpi" src="res/android/splash/drawable-land-xxxhdpi-screen.png" />
+        <splash density="port-ldpi" src="res/android/splash/drawable-port-ldpi-screen.png" />
+        <splash density="port-mdpi" src="res/android/splash/drawable-port-mdpi-screen.png" />
+        <splash density="port-hdpi" src="res/android/splash/drawable-port-hdpi-screen.png" />
+        <splash density="port-xhdpi" src="res/android/splash/drawable-port-xhdpi-screen.png" />
+        <splash density="port-xxhdpi" src="res/android/splash/drawable-port-xxhdpi-screen.png" />
+        <splash density="port-xxxhdpi" src="res/android/splash/drawable-port-xxxhdpi-screen.png" />
+        
+        <!-- Android permissions -->
+        <uses-permission android:name="android.permission.INTERNET" />
+        <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+        <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+        <uses-permission android:name="android.permission.VIBRATE" />
+        <uses-permission android:name="android.permission.WAKE_LOCK" />
+        
+        <!-- Android specific preferences -->
+        <preference name="android-windowSoftInputMode" value="adjustResize" />
+        <preference name="Orientation" value="portrait" />
+        <preference name="Fullscreen" value="false" />
+        <preference name="KeepRunning" value="true" />
+        <preference name="LoadingDialog" value="Islamic Quiz Card Game,Loading..." />
+        <preference name="LoadingPageDialog" value="Islamic Quiz Card Game,Loading..." />
+        <preference name="ErrorUrl" value="file:///android_asset/www/error.html" />
+        
+        <!-- Content Security Policy for Android -->
+        <allow-navigation href="*" />
+        <access origin="*" />
+        
+        <!-- Network Security Config -->
+        <resource-file src="res/android/xml/network_security_config.xml" target="app/src/main/res/xml/network_security_config.xml" />
+        <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
+            <application android:networkSecurityConfig="@xml/network_security_config" />
+        </edit-config>
+    </platform>
+    
+    <!-- iOS specific -->
+    <platform name="ios">
+        <allow-intent href="itms:*" />
+        <allow-intent href="itms-apps:*" />
+        
+        <!-- App icons -->
+        <icon height="57" src="res/ios/icon/icon.png" width="57" />
+        <icon height="114" src="res/ios/icon/icon@2x.png" width="114" />
+        <icon height="29" src="res/ios/icon/icon-small.png" width="29" />
+        <icon height="58" src="res/ios/icon/icon-small@2x.png" width="58" />
+        <icon height="87" src="res/ios/icon/icon-small@3x.png" width="87" />
+        <icon height="40" src="res/ios/icon/icon-40.png" width="40" />
+        <icon height="80" src="res/ios/icon/icon-40@2x.png" width="80" />
+        <icon height="120" src="res/ios/icon/icon-40@3x.png" width="120" />
+        <icon height="50" src="res/ios/icon/icon-50.png" width="50" />
+        <icon height="100" src="res/ios/icon/icon-50@2x.png" width="100" />
+        <icon height="60" src="res/ios/icon/icon-60.png" width="60" />
+        <icon height="120" src="res/ios/icon/icon-60@2x.png" width="120" />
+        <icon height="180" src="res/ios/icon/icon-60@3x.png" width="180" />
+        <icon height="72" src="res/ios/icon/icon-72.png" width="72" />
+        <icon height="144" src="res/ios/icon/icon-72@2x.png" width="144" />
+        <icon height="76" src="res/ios/icon/icon-76.png" width="76" />
+        <icon height="152" src="res/ios/icon/icon-76@2x.png" width="152" />
+        <icon height="167" src="res/ios/icon/icon-83.5@2x.png" width="167" />
+        <icon height="1024" src="res/ios/icon/icon-1024.png" width="1024" />
+        
+        <!-- Splash screens -->
+        <splash height="1136" src="res/ios/splash/Default-568h@2x~iphone.png" width="640" />
+        <splash height="1334" src="res/ios/splash/Default-667h.png" width="750" />
+        <splash height="2208" src="res/ios/splash/Default-736h.png" width="1242" />
+        <splash height="2436" src="res/ios/splash/Default-2436h.png" width="1125" />
+        <splash height="2732" src="res/ios/splash/Default@2x~universal~anyany.png" width="2732" />
+        
+        <!-- iOS specific preferences -->
+        <preference name="Orientation" value="portrait" />
+        <preference name="target-device" value="universal" />
+        <preference name="webviewbounce" value="false" />
+        <preference name="UIWebViewBounce" value="false" />
+        <preference name="DisallowOverscroll" value="true" />
+        <preference name="EnableViewportScale" value="false" />
+        <preference name="KeyboardDisplayRequiresUserAction" value="true" />
+        <preference name="SuppressesIncrementalRendering" value="false" />
+        <preference name="SuppressesLongPressGesture" value="false" />
+        <preference name="Suppresses3DTouchGesture" value="false" />
+        <preference name="GapBetweenPages" value="0" />
+        <preference name="PageLength" value="0" />
+        <preference name="PaginationBreakingMode" value="page" />
+        <preference name="PaginationMode" value="unpaginated" />
+        
+        <!-- iOS specific features -->
+        <feature name="CDVWKWebViewEngine">
+            <param name="ios-package" value="CDVWKWebViewEngine" />
+        </feature>
+        
+        <!-- Content Security Policy for iOS -->
+        <allow-navigation href="*" />
+        <access origin="*" />
+    </platform>
+    
+    <!-- Required plugins -->
+    <plugin name="cordova-plugin-whitelist" spec="^1.3.5" />
+    <plugin name="cordova-plugin-device" spec="^2.1.0" />
+    <plugin name="cordova-plugin-network-information" spec="^3.0.0" />
+    <plugin name="cordova-plugin-splashscreen" spec="^6.0.2" />
+    <plugin name="cordova-plugin-statusbar" spec="^4.0.0" />
+    <plugin name="cordova-plugin-vibration" spec="^4.0.0" />
+    <plugin name="cordova-plugin-screen-orientation" spec="^3.0.4" />
+    <plugin name="cordova-plugin-wkwebview-engine" spec="^1.2.1" />
+    <plugin name="cordova-plugin-ionic-webview" spec="^5.0.0" />
+    
+    <!-- Optional plugins for enhanced functionality -->
+    <plugin name="cordova-plugin-app-version" spec="^0.1.14" />
+    <plugin name="cordova-plugin-dialogs" spec="^2.0.2" />
+    <plugin name="cordova-plugin-inappbrowser" spec="^5.0.0" />
+    
+    <!-- Feature policies -->
+    <feature name="Device">
+        <param name="ios-package" value="CDVDevice" />
+    </feature>
+    
+    <feature name="NetworkStatus">
+        <param name="ios-package" value="CDVConnection" />
+    </feature>
+    
+    <feature name="SplashScreen">
+        <param name="ios-package" value="CDVSplashScreen" />
+        <param name="onload" value="true" />
+    </feature>
+    
+    <feature name="StatusBar">
+        <param name="ios-package" value="CDVStatusBar" />
+        <param name="onload" value="true" />
+    </feature>
+    
+    <!-- App Transport Security (iOS) -->
+    <edit-config file="*-Info.plist" mode="merge" target="NSAppTransportSecurity">
+        <dict>
+            <key>NSAllowsArbitraryLoads</key>
+            <true/>
+            <key>NSAllowsArbitraryLoadsInWebContent</key>
+            <true/>
+        </dict>
+    </edit-config>
+    
+    <!-- Additional Info.plist entries for iOS -->
+    <edit-config file="*-Info.plist" mode="merge" target="CFBundleDisplayName">
+        <string>Islamic Quiz</string>
+    </edit-config>
+    
+    <edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
+        <string>This app does not use the camera</string>
+    </edit-config>
+    
+    <edit-config file="*-Info.plist" mode="merge" target="NSMicrophoneUsageDescription">
+        <string>This app does not use the microphone</string>
+    </edit-config>
+    
+    <!-- Hook scripts -->
+    <hook type="before_prepare" src="hooks/before_prepare.js" />
+    <hook type="after_build" src="hooks/after_build.js" />
+</widget>
