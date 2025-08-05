@@ -225,7 +225,11 @@ class GameScene extends Phaser.Scene {
 
     setupNetworkListeners() {
         this.networkManager.on('questionReceived', (data) => {
-            this.displayQuestion(data.question);
+            this.currentQuestion = data.question;
+            // Show card flip animation before displaying question
+            this.showQuestionCardAnimation(() => {
+                this.displayQuestion(this.currentQuestion);
+            });
         });
         
         this.networkManager.on('answerResult', (data) => {
@@ -346,7 +350,143 @@ class GameScene extends Phaser.Scene {
         // Generate a practice question
         const questions = this.getPracticeQuestions();
         this.currentQuestion = Phaser.Utils.Array.GetRandom(questions);
-        this.displayQuestion(this.currentQuestion);
+        
+        // Show card flip animation before displaying question
+        this.showQuestionCardAnimation(() => {
+            this.displayQuestion(this.currentQuestion);
+        });
+    }
+
+    showQuestionCardAnimation(callback) {
+        const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
+        
+        // Create animated question card
+        const questionCard = this.add.image(width/2, height/2, 
+            this.textures.exists('card-back-hd') ? 'card-back-hd' : 'card-back'
+        );
+        
+        // Scale the card to appropriate size
+        questionCard.setScale(0.8);
+        questionCard.setDepth(1000); // Ensure it's on top
+        
+        // Start the card animation sequence
+        this.animateQuestionCard(questionCard, callback);
+    }
+
+    animateQuestionCard(card, callback) {
+        const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
+        
+        // Phase 1: Card flies in from off-screen
+        card.x = width + 200;
+        card.y = height/2;
+        card.setRotation(Math.PI / 4);
+        card.setAlpha(0);
+        
+        // Fly in animation
+        this.tweens.add({
+            targets: card,
+            x: width/2,
+            y: height/2,
+            rotation: 0,
+            alpha: 1,
+            duration: 800,
+            ease: 'Back.easeOut',
+            onComplete: () => {
+                // Phase 2: Card pulses to draw attention
+                this.tweens.add({
+                    targets: card,
+                    scaleX: 0.9,
+                    scaleY: 0.9,
+                    duration: 400,
+                    yoyo: true,
+                    repeat: 1,
+                    ease: 'Sine.easeInOut',
+                    onComplete: () => {
+                        // Phase 3: Card flips to reveal question
+                        this.flipCardToRevealQuestion(card, callback);
+                    }
+                });
+            }
+        });
+        
+        // Add floating particles around the card
+        this.createCardParticles(card);
+    }
+
+    flipCardToRevealQuestion(card, callback) {
+        // Flip animation (scale X to 0, then back to 1)
+        this.tweens.add({
+            targets: card,
+            scaleX: 0,
+            duration: 300,
+            ease: 'Power2.easeIn',
+            onComplete: () => {
+                // Change to question front (we'll use the same card for now)
+                // In the future, you could create a question card template
+                
+                // Flip back to show "question revealed"
+                this.tweens.add({
+                    targets: card,
+                    scaleX: 0.8,
+                    duration: 300,
+                    ease: 'Power2.easeOut',
+                    onComplete: () => {
+                        // Phase 4: Card moves to corner and shrinks
+                        this.tweens.add({
+                            targets: card,
+                            x: 100,
+                            y: 100,
+                            scaleX: 0.3,
+                            scaleY: 0.3,
+                            alpha: 0.8,
+                            duration: 600,
+                            ease: 'Power2.easeInOut',
+                            onComplete: () => {
+                                // Now show the actual question
+                                callback();
+                                
+                                // Keep the small card as decoration, remove after question
+                                this.time.delayedCall(2000, () => {
+                                    this.tweens.add({
+                                        targets: card,
+                                        alpha: 0,
+                                        duration: 500,
+                                        onComplete: () => card.destroy()
+                                    });
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    createCardParticles(card) {
+        // Create golden particles floating around the card
+        for (let i = 0; i < 8; i++) {
+            const particle = this.add.circle(
+                card.x + Phaser.Math.Between(-100, 100),
+                card.y + Phaser.Math.Between(-100, 100),
+                Phaser.Math.Between(3, 6),
+                0xFFD700,
+                0.7
+            );
+            
+            particle.setDepth(999);
+            
+            // Floating animation
+            this.tweens.add({
+                targets: particle,
+                y: particle.y - Phaser.Math.Between(50, 100),
+                alpha: 0,
+                duration: Phaser.Math.Between(1500, 2500),
+                ease: 'Quad.easeOut',
+                onComplete: () => particle.destroy()
+            });
+        }
     }
 
     getPracticeQuestions() {

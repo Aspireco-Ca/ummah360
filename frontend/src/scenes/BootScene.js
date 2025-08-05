@@ -74,13 +74,13 @@ class BootScene extends Phaser.Scene {
         // Set the base path for assets
         this.load.setPath('assets/');
         
-        // Load card designs (these will be added when you provide the images)
+        // Load card designs with actual filenames
         const cardAssets = [
-            { key: 'card-back-hd', path: 'cards/card-back.png' },
-            { key: 'card-template-blessing', path: 'cards/card-template-blessing.png' },
-            { key: 'card-template-challenge', path: 'cards/card-template-challenge.png' },
-            { key: 'card-template-knowledge', path: 'cards/card-template-knowledge.png' },
-            { key: 'card-template-wisdom', path: 'cards/card-template-wisdom.png' }
+            { key: 'card-back-hd', path: 'cards/Card Back Design.png' },
+            { key: 'card-template-blessing', path: 'cards/Blessing Card Template.png' },
+            { key: 'card-template-challenge', path: 'cards/Challenge Card Template.png' },
+            { key: 'card-template-knowledge', path: 'cards/Knowledge Card Template.png' },
+            { key: 'card-template-wisdom', path: 'cards/Wisdom Card Template.png' }
         ];
         
         // Load background images
@@ -98,13 +98,13 @@ class BootScene extends Phaser.Scene {
             { key: 'ui-frame-gold', path: 'ui/frame-gold.png' }
         ];
         
-        // Check if assets exist before loading
-        // For now, we'll comment these out until the actual images are provided
-        /*
+        // Load the card assets (now available)
         cardAssets.forEach(asset => {
             this.load.image(asset.key, asset.path);
         });
         
+        // Background assets will be loaded when provided
+        /*
         backgroundAssets.forEach(asset => {
             this.load.image(asset.key, asset.path);
         });
