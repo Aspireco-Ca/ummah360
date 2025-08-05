@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Islamic Quiz Card Game</title><meta name="description" content="Multiplayer Islamic Quiz Card Game - Learn Islamic knowledge through engaging gameplay"><meta name="theme-color" content="#1B5E20"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Islamic Quiz"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 100%);
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+        
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .loading {
+            color: white;
+            text-align: center;
+            font-size: 18px;
+        }
+        
+        .loading-spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Islamic geometric pattern overlay */
+        .islamic-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><polygon fill="white" points="50,10 90,50 50,90 10,50"/></svg>');
+            background-size: 100px 100px;
+            z-index: -1;
+        }</style><script defer="defer" src="bundle.js"></script></head><body><div class="islamic-pattern"></div><div id="game-container"><div class="loading"><div class="loading-spinner"></div><p>بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</p><p>Loading Islamic Quiz Card Game...</p></div></div></body></html>

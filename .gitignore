@@ -13,7 +13,6 @@ yarn.lock
 .env.production
 
 # Build outputs
-frontend/dist/
 mobile/www/
 mobile/platforms/
 mobile/plugins/
