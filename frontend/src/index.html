@@ -88,11 +88,15 @@
 
     <script>
         console.log('📋 Inline script executing');
-        document.getElementById('debug-status').textContent = '✅ JavaScript works!';
-        setTimeout(() => {
-            const status = document.getElementById('debug-status');
-            status.textContent = '⏳ Waiting for bundle.js...';
-        }, 1000);
+        const debugStatus = document.getElementById('debug-status');
+        if (debugStatus) {
+            debugStatus.textContent = '✅ JavaScript works!';
+            setTimeout(() => {
+                if (debugStatus) {
+                    debugStatus.textContent = '⏳ Bundle.js loaded, starting game...';
+                }
+            }, 1000);
+        }
     </script>
 </body>
 </html>

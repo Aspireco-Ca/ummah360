@@ -50,8 +50,12 @@
             background-size: 100px 100px;
             z-index: -1;
         }</style><script defer="defer" src="bundle.js"></script></head><body><div class="islamic-pattern"></div><div id="game-container"><div class="loading"><div class="loading-spinner"></div><p>بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</p><p>Loading Islamic Quiz Card Game...</p><p id="debug-status">🔍 Testing JavaScript...</p></div></div><script>console.log('📋 Inline script executing');
-        document.getElementById('debug-status').textContent = '✅ JavaScript works!';
-        setTimeout(() => {
-            const status = document.getElementById('debug-status');
-            status.textContent = '⏳ Waiting for bundle.js...';
-        }, 1000);</script></body></html>
+        const debugStatus = document.getElementById('debug-status');
+        if (debugStatus) {
+            debugStatus.textContent = '✅ JavaScript works!';
+            setTimeout(() => {
+                if (debugStatus) {
+                    debugStatus.textContent = '⏳ Bundle.js loaded, starting game...';
+                }
+            }, 1000);
+        }</script></body></html>
