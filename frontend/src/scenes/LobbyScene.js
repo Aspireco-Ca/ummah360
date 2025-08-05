@@ -118,6 +118,8 @@ class LobbyScene extends Phaser.Scene {
     }
 
     createPlayerSlot(x, y, index) {
+        const width = this.cameras.main.width;
+        
         // Player slot background
         const slotBg = this.add.rectangle(x, y, width * 0.8, 60, 0x2E7D32, 0.3);
         slotBg.setStrokeStyle(2, 0xFFD700, 0.5);
