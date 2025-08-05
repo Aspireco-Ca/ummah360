@@ -99,12 +99,16 @@ class BootScene extends Phaser.Scene {
         ];
         
         // Load the card assets (now available)
+        console.log('🎴 Loading card assets...');
         cardAssets.forEach(asset => {
+            console.log(`Loading card: ${asset.key} from ${asset.path}`);
             this.load.image(asset.key, asset.path);
         });
         
         // Load background assets (uncommented to enable)
+        console.log('🖼️ Loading background assets...');
         backgroundAssets.forEach(asset => {
+            console.log(`Loading background: ${asset.key} from ${asset.path}`);
             this.load.image(asset.key, asset.path);
         });
         
@@ -115,10 +119,14 @@ class BootScene extends Phaser.Scene {
         });
         */
         
-        // Add event handlers for missing files
+        // Add event handlers for file loading
         this.load.on('loaderror', (fileObj) => {
-            console.warn(`Failed to load: ${fileObj.key} from ${fileObj.url}`);
+            console.error(`❌ Failed to load: ${fileObj.key} from ${fileObj.url}`);
             // The placeholder assets will be used as fallback
+        });
+        
+        this.load.on('filecomplete', (key, type, data) => {
+            console.log(`✅ Successfully loaded: ${key} (${type})`);
         });
     }
 

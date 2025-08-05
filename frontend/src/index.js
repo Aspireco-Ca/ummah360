@@ -1,4 +1,4 @@
-console.log('🎮 Starting Islamic Quiz Game...');
+console.log('🎮 Starting Islamic Quiz Game... v2.0 with card assets!');
 
 import Phaser from 'phaser';
 import './styles/main.css';
