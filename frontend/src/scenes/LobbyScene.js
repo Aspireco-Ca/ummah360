@@ -4,32 +4,45 @@ class LobbyScene extends Phaser.Scene {
     constructor() {
         super({ key: 'LobbyScene' });
         this.networkManager = null;
-        this.roomData = null;
+        this.playerName = '';
+        this.mode = 'quick';
+        this.roomCode = '';
         this.players = [];
         this.isHost = false;
-        this.playerElements = [];
+        this.gameSettings = {
+            category: 'All',
+            difficulty: 'Mixed',
+            questionCount: 20,
+            timeLimit: 30
+        };
     }
 
     init(data) {
-        this.roomData = data.roomData || {};
-        this.networkManager = this.game.networkManager;
-        this.isHost = this.roomData.isHost || false;
+        this.networkManager = data.networkManager;
+        this.playerName = data.playerName || 'Anonymous';
+        this.mode = data.mode || 'quick';
+        this.roomCode = data.roomCode || '';
+        
+        if (this.mode === 'create') {
+            this.isHost = true;
+            this.roomCode = this.generateRoomCode();
+        }
     }
 
     create() {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
         
-        // Background
-        this.createBackground();
+        // Beautiful background
+        this.createLobbyBackground();
         
-        // Room info
-        this.createRoomInfo();
+        // Header with room info
+        this.createLobbyHeader();
         
-        // Players list
+        // Players area
         this.createPlayersArea();
         
-        // Game settings (if host)
+        // Game settings (host only)
         if (this.isHost) {
             this.createGameSettings();
         }
@@ -40,55 +53,105 @@ class LobbyScene extends Phaser.Scene {
         // Chat area
         this.createChatArea();
         
-        // Setup network listeners
-        this.setupNetworkListeners();
+        // Back button
+        this.createBackButton();
         
-        // Initialize with current room data
-        if (this.roomData.players) {
-            this.updatePlayersList(this.roomData.players);
-        }
+        // Setup network events
+        this.setupNetworkEvents();
+        
+        // Add initial player
+        this.addPlayer(this.playerName, true);
     }
 
-    createBackground() {
+    createLobbyBackground() {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
         
         // Gradient background
-        const gradient = this.add.graphics();
-        gradient.fillGradientStyle(0x1B5E20, 0x1B5E20, 0x2E7D32, 0x2E7D32);
-        gradient.fillRect(0, 0, width, height);
+        const bg = this.add.graphics();
+        bg.fillGradientStyle(0x0D4E12, 0x1B5E20, 0x2E7D32, 0x1B5E20);
+        bg.fillRect(0, 0, width, height);
         
-        // Pattern overlay
-        for (let x = 0; x < width; x += 100) {
-            for (let y = 0; y < height; y += 100) {
-                this.add.image(x, y, 'bg-pattern').setOrigin(0, 0).setAlpha(0.03);
-            }
+        // Floating particles for ambiance
+        this.createFloatingParticles();
+        
+        // Subtle overlay
+        const overlay = this.add.graphics();
+        overlay.fillStyle(0x000000, 0.05);
+        overlay.fillRect(0, 0, width, height);
+    }
+
+    createFloatingParticles() {
+        const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
+        
+        for (let i = 0; i < 10; i++) {
+            const particle = this.add.circle(
+                Phaser.Math.Between(0, width),
+                Phaser.Math.Between(0, height),
+                Phaser.Math.Between(2, 6),
+                0xFFD700,
+                Phaser.Math.FloatBetween(0.1, 0.3)
+            );
+            
+            this.tweens.add({
+                targets: particle,
+                y: particle.y - Phaser.Math.Between(50, 100),
+                alpha: { from: 0.1, to: 0.4 },
+                duration: Phaser.Math.Between(4000, 8000),
+                yoyo: true,
+                repeat: -1,
+                ease: 'Sine.easeInOut'
+            });
         }
     }
 
-    createRoomInfo() {
+    createLobbyHeader() {
         const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
         
-        // Title
-        this.add.text(width / 2, 50, 'Game Lobby', {
-            fontSize: '28px',
+        // Header background
+        const headerBg = this.add.graphics();
+        headerBg.fillStyle(0x1B5E20, 0.8);
+        headerBg.fillRoundedRect(50, 30, width - 100, 80, 15);
+        headerBg.lineStyle(2, 0xFFD700, 0.8);
+        headerBg.strokeRoundedRect(50, 30, width - 100, 80, 15);
+        
+        // Room title
+        let titleText = '';
+        switch (this.mode) {
+            case 'quick':
+                titleText = '⚡ Quick Match Lobby';
+                break;
+            case 'create':
+                titleText = '🏠 Room Created';
+                break;
+            case 'join':
+                titleText = '🚪 Joined Room';
+                break;
+        }
+        
+        this.add.text(width/2, 50, titleText, {
+            fontSize: '24px',
             fontFamily: 'Inter, sans-serif',
-            fontStyle: 'bold',
+            fontWeight: 'bold',
             fill: '#FFFFFF',
             align: 'center'
         }).setOrigin(0.5);
         
-        // Room ID
-        this.roomIdText = this.add.text(width / 2, 90, `Room ID: ${this.roomData.roomId || 'Loading...'}`, {
-            fontSize: '18px',
-            fontFamily: 'Inter, sans-serif',
-            fill: '#FFD700',
-            align: 'center'
-        }).setOrigin(0.5);
+        // Room code (if applicable)
+        if (this.roomCode) {
+            this.add.text(width/2, 80, `Room Code: ${this.roomCode}`, {
+                fontSize: '16px',
+                fontFamily: 'Inter, sans-serif',
+                fill: '#FFD700',
+                align: 'center'
+            }).setOrigin(0.5);
+        }
         
-        // Game mode
-        this.gameModeText = this.add.text(width / 2, 120, `Mode: ${this.roomData.gameMode || 'Quick Match'}`, {
-            fontSize: '16px',
+        // Status
+        this.statusText = this.add.text(width/2, 95, 'Waiting for players...', {
+            fontSize: '14px',
             fontFamily: 'Inter, sans-serif',
             fill: '#E8F5E8',
             align: 'center'
@@ -99,261 +162,377 @@ class LobbyScene extends Phaser.Scene {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
         
-        // Players section title
-        this.add.text(50, 160, 'Players:', {
-            fontSize: '20px',
+        // Players section header
+        this.add.text(80, 140, '👥 Players (1/4)', {
+            fontSize: '18px',
             fontFamily: 'Inter, sans-serif',
-            fontStyle: 'bold',
+            fontWeight: '600',
             fill: '#FFFFFF'
         });
         
-        // Players container
+        // Player slots container
         this.playersContainer = this.add.container(0, 0);
+        this.playerSlots = [];
         
-        // Create slots for up to 4 players
+        // Create 4 player slots
         for (let i = 0; i < 4; i++) {
-            const slot = this.createPlayerSlot(60, 200 + i * 80, i);
-            this.playerElements.push(slot);
+            const slot = this.createPlayerSlot(80, 170 + i * 70, i);
+            this.playerSlots.push(slot);
+            this.playersContainer.add(slot);
         }
     }
 
     createPlayerSlot(x, y, index) {
         const width = this.cameras.main.width;
+        const slotContainer = this.add.container(x, y);
         
-        // Player slot background
-        const slotBg = this.add.rectangle(x, y, width * 0.8, 60, 0x2E7D32, 0.3);
-        slotBg.setStrokeStyle(2, 0xFFD700, 0.5);
+        // Slot background
+        const slotBg = this.add.graphics();
+        slotBg.fillStyle(0x2E7D32, 0.4);
+        slotBg.lineStyle(2, 0x4CAF50, 0.6);
+        slotBg.fillRoundedRect(0, 0, width - 160, 60, 10);
+        slotBg.strokeRoundedRect(0, 0, width - 160, 60, 10);
         
         // Player avatar
-        const avatar = this.add.image(x - width * 0.35, y, 'player-avatar').setScale(0.6);
+        const avatar = this.add.circle(40, 30, 20, 0x757575);
+        const avatarIcon = this.add.text(40, 30, '👤', {
+            fontSize: '20px',
+            align: 'center'
+        }).setOrigin(0.5);
         
         // Player name
-        const nameText = this.add.text(x - width * 0.25, y - 15, 'Waiting for player...', {
+        const nameText = this.add.text(80, 20, 'Waiting for player...', {
             fontSize: '16px',
             fontFamily: 'Inter, sans-serif',
+            fontWeight: '500',
             fill: '#FFFFFF'
         });
         
         // Player status
-        const statusText = this.add.text(x - width * 0.25, y + 15, '', {
-            fontSize: '14px',
+        const statusText = this.add.text(80, 40, '', {
+            fontSize: '12px',
             fontFamily: 'Inter, sans-serif',
-            fill: '#E8F5E8'
+            fill: '#A5D6A7'
         });
         
         // Ready indicator
-        const readyIndicator = this.add.circle(x + width * 0.3, y, 8, 0xFF6B6B);
+        const readyIndicator = this.add.circle(width - 200, 30, 8, 0xFF6B6B);
+        readyIndicator.setVisible(false);
         
-        return {
-            background: slotBg,
-            avatar: avatar,
-            nameText: nameText,
-            statusText: statusText,
-            readyIndicator: readyIndicator,
-            isEmpty: true
-        };
+        // Host crown (for host)
+        const hostCrown = this.add.text(width - 180, 30, '👑', {
+            fontSize: '16px',
+            align: 'center'
+        }).setOrigin(0.5).setVisible(false);
+        
+        slotContainer.add([slotBg, avatar, avatarIcon, nameText, statusText, readyIndicator, hostCrown]);
+        
+        // Store references for easy access
+        slotContainer.nameText = nameText;
+        slotContainer.statusText = statusText;
+        slotContainer.readyIndicator = readyIndicator;
+        slotContainer.hostCrown = hostCrown;
+        slotContainer.avatar = avatar;
+        slotContainer.avatarIcon = avatarIcon;
+        slotContainer.isEmpty = true;
+        
+        return slotContainer;
     }
 
     createGameSettings() {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
         
-        // Settings section (only for host)
-        this.add.text(width / 2, height * 0.65, 'Game Settings (Host)', {
+        // Settings container
+        const settingsBg = this.add.graphics();
+        settingsBg.fillStyle(0x1B5E20, 0.6);
+        settingsBg.lineStyle(2, 0xFFD700, 0.8);
+        settingsBg.fillRoundedRect(width/2 + 20, 140, width/2 - 70, 200, 15);
+        settingsBg.strokeRoundedRect(width/2 + 20, 140, width/2 - 70, 200, 15);
+        
+        // Settings title
+        this.add.text(width/2 + 40, 160, '⚙️ Game Settings', {
             fontSize: '18px',
             fontFamily: 'Inter, sans-serif',
-            fontStyle: 'bold',
-            fill: '#FFD700',
-            align: 'center'
-        }).setOrigin(0.5);
+            fontWeight: '600',
+            fill: '#FFD700'
+        });
         
-        // Game mode selector
-        this.createGameModeSelector();
-        
-        // Category selector
-        this.createCategorySelector();
-    }
-
-    createGameModeSelector() {
-        const width = this.cameras.main.width;
-        const height = this.cameras.main.height;
-        
-        const y = height * 0.7;
-        
-        this.add.text(width / 2 - 100, y, 'Mode:', {
-            fontSize: '16px',
+        // Category setting
+        this.add.text(width/2 + 40, 190, 'Category:', {
+            fontSize: '14px',
             fontFamily: 'Inter, sans-serif',
             fill: '#FFFFFF'
         });
         
-        // Quick Match button
-        const quickBtn = this.createSettingButton(width / 2 - 50, y + 30, 'Quick', () => {
-            this.changeGameMode('quick_match');
+        this.categoryButton = this.createSettingButton(width/2 + 40, 210, this.gameSettings.category, () => {
+            this.cycleSetting('category', ['All', 'Quran', 'Hadith', 'Fiqh', 'History']);
         });
         
-        // Tournament button
-        const tournamentBtn = this.createSettingButton(width / 2 + 50, y + 30, 'Tournament', () => {
-            this.changeGameMode('tournament');
-        });
-        
-        this.gameModeButtons = [quickBtn, tournamentBtn];
-    }
-
-    createCategorySelector() {
-        const width = this.cameras.main.width;
-        const height = this.cameras.main.height;
-        
-        const y = height * 0.8;
-        
-        this.add.text(width / 2 - 100, y, 'Categories:', {
-            fontSize: '16px',
+        // Difficulty setting
+        this.add.text(width/2 + 40, 240, 'Difficulty:', {
+            fontSize: '14px',
             fontFamily: 'Inter, sans-serif',
             fill: '#FFFFFF'
         });
         
-        const categories = ['All', 'Quran', 'Hadith', 'Fiqh', 'History'];
-        this.categoryButtons = [];
+        this.difficultyButton = this.createSettingButton(width/2 + 40, 260, this.gameSettings.difficulty, () => {
+            this.cycleSetting('difficulty', ['Easy', 'Medium', 'Hard', 'Mixed']);
+        });
         
-        categories.forEach((category, index) => {
-            const x = width / 2 - 80 + (index * 40);
-            const btn = this.createSettingButton(x, y + 30, category, () => {
-                this.changeCategory(category);
-            });
-            this.categoryButtons.push(btn);
+        // Question count
+        this.add.text(width/2 + 40, 290, 'Questions:', {
+            fontSize: '14px',
+            fontFamily: 'Inter, sans-serif',
+            fill: '#FFFFFF'
+        });
+        
+        this.questionCountButton = this.createSettingButton(width/2 + 40, 310, `${this.gameSettings.questionCount}`, () => {
+            this.cycleSetting('questionCount', [10, 15, 20, 25, 30]);
         });
     }
 
     createSettingButton(x, y, text, callback) {
-        const button = this.add.rectangle(x, y, 70, 30, 0x1B5E20).setInteractive();
-        const buttonText = this.add.text(x, y, text, {
+        const button = this.add.container(x, y);
+        
+        const bg = this.add.graphics();
+        bg.fillStyle(0x4CAF50, 0.8);
+        bg.lineStyle(2, 0xFFD700, 0.8);
+        bg.fillRoundedRect(0, 0, 120, 25, 12);
+        bg.strokeRoundedRect(0, 0, 120, 25, 12);
+        
+        const buttonText = this.add.text(60, 12, text, {
             fontSize: '12px',
             fontFamily: 'Inter, sans-serif',
+            fontWeight: '600',
             fill: '#FFFFFF',
             align: 'center'
         }).setOrigin(0.5);
         
-        button.setStrokeStyle(1, 0xFFD700);
+        button.add([bg, buttonText]);
+        button.setSize(120, 25);
+        button.setInteractive({ cursor: 'pointer' });
+        button.buttonText = buttonText;
         
-        button.on('pointerup', callback);
+        button.on('pointerover', () => {
+            bg.clear();
+            bg.fillStyle(0x66BB6A, 0.9);
+            bg.lineStyle(2, 0xFFD700, 1);
+            bg.fillRoundedRect(0, 0, 120, 25, 12);
+            bg.strokeRoundedRect(0, 0, 120, 25, 12);
+        });
         
-        return { button, text: buttonText };
+        button.on('pointerout', () => {
+            bg.clear();
+            bg.fillStyle(0x4CAF50, 0.8);
+            bg.lineStyle(2, 0xFFD700, 0.8);
+            bg.fillRoundedRect(0, 0, 120, 25, 12);
+            bg.strokeRoundedRect(0, 0, 120, 25, 12);
+        });
+        
+        button.on('pointerdown', callback);
+        
+        return button;
     }
 
     createActionButtons() {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
         
-        const buttonY = height - 100;
+        // Ready/Start button
+        const buttonText = this.isHost ? '🚀 Start Game' : '✅ Ready';
+        const buttonColor = this.isHost ? 0xFF6B35 : 0x4CAF50;
         
-        // Start Game button (host only)
-        if (this.isHost) {
-            this.startGameBtn = this.createActionButton(width / 2 - 100, buttonY, 'Start Game', () => {
+        this.actionButton = this.createActionButton(width/2 - 100, height - 120, buttonText, buttonColor, () => {
+            if (this.isHost) {
                 this.startGame();
-            });
-        }
-        
-        // Ready button
-        this.readyBtn = this.createActionButton(width / 2, buttonY, 'Ready', () => {
-            this.toggleReady();
+            } else {
+                this.toggleReady();
+            }
         });
         
-        // Leave Room button
-        this.leaveBtn = this.createActionButton(width / 2 + 100, buttonY, 'Leave', () => {
+        // Leave room button
+        this.leaveButton = this.createActionButton(width/2 + 100, height - 120, '🚪 Leave', 0xFF5722, () => {
             this.leaveRoom();
         });
     }
 
-    createActionButton(x, y, text, callback) {
-        const button = this.add.image(x, y, 'button').setInteractive().setScale(0.8);
-        const buttonText = this.add.text(x, y, text, {
-            fontSize: '14px',
+    createActionButton(x, y, text, color, callback) {
+        const button = this.add.container(x, y);
+        
+        const bg = this.add.graphics();
+        bg.fillGradientStyle(color, color, Phaser.Display.Color.GetColor32(
+            Phaser.Display.Color.Lighten(Phaser.Display.Color.ColorToRGBA(color), 20)
+        ), color);
+        bg.fillRoundedRect(-80, -20, 160, 40, 20);
+        
+        const border = this.add.graphics();
+        border.lineStyle(2, 0xFFD700, 0.8);
+        border.strokeRoundedRect(-80, -20, 160, 40, 20);
+        
+        const buttonText = this.add.text(0, 0, text, {
+            fontSize: '16px',
             fontFamily: 'Inter, sans-serif',
-            fontStyle: 'bold',
-            fill: '#1B5E20',
+            fontWeight: '600',
+            fill: '#FFFFFF',
             align: 'center'
         }).setOrigin(0.5);
         
-        button.on('pointerup', callback);
+        button.add([bg, border, buttonText]);
+        button.setSize(160, 40);
+        button.setInteractive({ cursor: 'pointer' });
         
-        return { button, text: buttonText };
+        button.on('pointerover', () => {
+            button.setScale(1.05);
+            border.lineStyle(3, 0xFFD700, 1);
+            border.clear();
+            border.strokeRoundedRect(-80, -20, 160, 40, 20);
+        });
+        
+        button.on('pointerout', () => {
+            button.setScale(1);
+            border.lineStyle(2, 0xFFD700, 0.8);
+            border.clear();
+            border.strokeRoundedRect(-80, -20, 160, 40, 20);
+        });
+        
+        button.on('pointerdown', callback);
+        
+        return button;
     }
 
     createChatArea() {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
         
-        // Chat will be implemented in a future update
-        // For now, just show a placeholder
-        this.add.text(50, height - 50, 'Chat: Coming soon!', {
+        // Chat container
+        const chatBg = this.add.graphics();
+        chatBg.fillStyle(0x1B5E20, 0.4);
+        chatBg.lineStyle(2, 0x4CAF50, 0.6);
+        chatBg.fillRoundedRect(80, height - 200, width/2 - 100, 70, 10);
+        chatBg.strokeRoundedRect(80, height - 200, width/2 - 100, 70, 10);
+        
+        this.add.text(90, height - 190, '💬 Quick Chat', {
             fontSize: '14px',
             fontFamily: 'Inter, sans-serif',
-            fill: '#E8F5E8'
+            fontWeight: '600',
+            fill: '#FFFFFF'
+        });
+        
+        // Quick chat buttons
+        const chatMessages = ['Ready!', 'Wait please', 'Good luck!', "Let's go!"];
+        chatMessages.forEach((msg, index) => {
+            const btn = this.add.text(90 + (index * 70), height - 170, msg, {
+                fontSize: '11px',
+                fontFamily: 'Inter, sans-serif',
+                fill: '#A5D6A7',
+                backgroundColor: '#2E7D32',
+                padding: { x: 8, y: 4 }
+            }).setInteractive({ cursor: 'pointer' });
+            
+            btn.on('pointerdown', () => {
+                this.sendChatMessage(msg);
+            });
         });
     }
 
-    setupNetworkListeners() {
-        this.networkManager.on('playerJoined', (data) => {
-            this.updatePlayersList(data.players);
-        });
+    createBackButton() {
+        const backButton = this.add.text(50, 50, '← Back to Menu', {
+            fontSize: '16px',
+            fontFamily: 'Inter, sans-serif',
+            fontWeight: '500',
+            fill: '#FFD700',
+            backgroundColor: '#1B5E20',
+            padding: { x: 15, y: 8 }
+        }).setInteractive({ cursor: 'pointer' });
         
-        this.networkManager.on('playerLeft', (data) => {
-            this.updatePlayersList(data.players);
-        });
-        
-        this.networkManager.on('gameStarted', (data) => {
-            this.scene.start('GameScene', { gameData: data });
-        });
-        
-        this.networkManager.on('roomLeft', () => {
+        backButton.on('pointerdown', () => {
             this.scene.start('MenuScene');
         });
-    }
-
-    updatePlayersList(players) {
-        this.players = players || [];
         
-        // Update each player slot
-        this.playerElements.forEach((slot, index) => {
-            if (index < this.players.length) {
-                const player = this.players[index];
-                slot.nameText.setText(player.name);
-                slot.statusText.setText(player.isHost ? 'Host' : 'Player');
-                slot.readyIndicator.setFillStyle(player.isReady ? 0x4CAF50 : 0xFF6B6B);
-                slot.isEmpty = false;
-                slot.avatar.setVisible(true);
-            } else {
-                slot.nameText.setText('Waiting for player...');
-                slot.statusText.setText('');
-                slot.readyIndicator.setFillStyle(0xFF6B6B);
-                slot.isEmpty = true;
-                slot.avatar.setVisible(false);
-            }
+        backButton.on('pointerover', () => {
+            backButton.setTint(0xFFFFFF);
+        });
+        
+        backButton.on('pointerout', () => {
+            backButton.clearTint();
         });
     }
 
-    changeGameMode(mode) {
-        // Send to server
-        // Implementation depends on backend
+    // Game logic methods
+    addPlayer(name, isCurrentPlayer = false) {
+        const emptySlot = this.playerSlots.find(slot => slot.isEmpty);
+        if (!emptySlot) return;
+        
+        emptySlot.isEmpty = false;
+        emptySlot.nameText.setText(name);
+        emptySlot.statusText.setText(isCurrentPlayer ? 'You' : 'Connected');
+        emptySlot.avatar.setFillStyle(0x4CAF50);
+        emptySlot.avatarIcon.setText('👤');
+        
+        if (isCurrentPlayer && this.isHost) {
+            emptySlot.hostCrown.setVisible(true);
+            emptySlot.statusText.setText('Host (You)');
+        }
+        
+        this.updatePlayerCount();
     }
 
-    changeCategory(category) {
-        // Send to server
-        // Implementation depends on backend
+    updatePlayerCount() {
+        const playerCount = this.playerSlots.filter(slot => !slot.isEmpty).length;
+        const playersHeader = this.children.getByName('playersHeader');
+        // Update the players count display would go here
     }
 
-    toggleReady() {
-        // Toggle ready state
-        // Implementation depends on backend
-    }
-
-    startGame() {
-        if (this.isHost && this.players.length >= 2) {
-            this.networkManager.startGame();
+    cycleSetting(setting, values) {
+        const currentIndex = values.indexOf(this.gameSettings[setting]);
+        const nextIndex = (currentIndex + 1) % values.length;
+        this.gameSettings[setting] = values[nextIndex];
+        
+        // Update button text
+        switch (setting) {
+            case 'category':
+                this.categoryButton.buttonText.setText(this.gameSettings.category);
+                break;
+            case 'difficulty':
+                this.difficultyButton.buttonText.setText(this.gameSettings.difficulty);
+                break;
+            case 'questionCount':
+                this.questionCountButton.buttonText.setText(`${this.gameSettings.questionCount}`);
+                break;
         }
     }
 
+    startGame() {
+        console.log('Starting game with settings:', this.gameSettings);
+        this.scene.start('GameScene', {
+            mode: this.mode,
+            playerName: this.playerName,
+            settings: this.gameSettings
+        });
+    }
+
+    toggleReady() {
+        // Toggle ready state logic would go here
+        console.log('Toggling ready state');
+    }
+
     leaveRoom() {
-        this.networkManager.leaveRoom();
+        this.scene.start('MenuScene');
+    }
+
+    sendChatMessage(message) {
+        console.log('Sending chat message:', message);
+        // Chat logic would go here
+    }
+
+    setupNetworkEvents() {
+        // Network event handling would go here
+        console.log('Setting up network events for lobby');
+    }
+
+    generateRoomCode() {
+        return Math.random().toString(36).substring(2, 8).toUpperCase();
     }
 }
 

@@ -5,6 +5,9 @@ class MenuScene extends Phaser.Scene {
         super({ key: 'MenuScene' });
         this.networkManager = null;
         this.playerName = '';
+        this.buttons = [];
+        this.nameInput = null;
+        this.isConnected = false;
     }
 
     create() {
@@ -13,136 +16,136 @@ class MenuScene extends Phaser.Scene {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
         
-        // Background
-        this.createBackground();
+        // Beautiful background
+        this.createModernBackground();
         
-        // Title
-        this.createTitle();
+        // Islamic title with better typography
+        this.createIslamicTitle();
         
-        // Menu options
-        this.createMenuButtons();
-        
-        // Player name input
+        // Player name input with better design
         this.createPlayerNameInput();
         
-        // Connection status
-        this.createConnectionStatus();
+        // Modern menu buttons
+        this.createModernMenuButtons();
         
-        // Setup network event listeners
+        // Footer with connection status
+        this.createFooter();
+        
+        // Setup interactions
         this.setupNetworkListeners();
+        this.setupInputHandlers();
     }
 
-    createBackground() {
+    createModernBackground() {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
         
         // Gradient background
-        const gradient = this.add.graphics();
-        gradient.fillGradientStyle(0x1B5E20, 0x1B5E20, 0x2E7D32, 0x2E7D32);
-        gradient.fillRect(0, 0, width, height);
+        const bg = this.add.graphics();
+        bg.fillGradientStyle(0x0D4E12, 0x1B5E20, 0x2E7D32, 0x388E3C);
+        bg.fillRect(0, 0, width, height);
         
-        // Add subtle pattern
-        for (let x = 0; x < width; x += 100) {
-            for (let y = 0; y < height; y += 100) {
-                this.add.image(x, y, 'bg-pattern').setOrigin(0, 0).setAlpha(0.05);
-            }
-        }
+        // Animated Islamic geometric patterns
+        this.createAnimatedPatterns();
         
-        // Islamic star pattern
-        this.createIslamicStars();
+        // Subtle overlay
+        const overlay = this.add.graphics();
+        overlay.fillStyle(0x000000, 0.1);
+        overlay.fillRect(0, 0, width, height);
     }
 
-    createIslamicStars() {
+    createAnimatedPatterns() {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
         
-        // Create floating stars
-        for (let i = 0; i < 20; i++) {
+        // Create floating Islamic stars with animation
+        for (let i = 0; i < 15; i++) {
             const star = this.add.graphics();
             const x = Phaser.Math.Between(50, width - 50);
             const y = Phaser.Math.Between(50, height - 50);
-            const size = Phaser.Math.Between(3, 8);
+            const size = Phaser.Math.Between(4, 12);
             
-            star.fillStyle(0xFFD700, 0.3);
+            star.fillStyle(0xFFD700, Phaser.Math.FloatBetween(0.1, 0.4));
+            this.drawStar(star, 0, 0, 8, size, size * 0.5);
+            star.setPosition(x, y);
             
-            // Draw star manually using paths (fillStar doesn't exist in Phaser 3)
-            this.drawStar(star, x, y, 8, size, size * 0.5);
-            
-            // Add twinkling animation
+            // Floating animation
             this.tweens.add({
                 targets: star,
+                y: y - Phaser.Math.Between(20, 40),
                 alpha: { from: 0.1, to: 0.6 },
-                duration: Phaser.Math.Between(2000, 4000),
+                duration: Phaser.Math.Between(3000, 6000),
                 yoyo: true,
                 repeat: -1,
                 ease: 'Sine.easeInOut'
             });
         }
-    }
-
-    drawStar(graphics, x, y, points, outerRadius, innerRadius) {
-        const step = Math.PI / points;
-        let path = [];
         
-        for (let i = 0; i <= points * 2; i++) {
-            const radius = i % 2 === 0 ? outerRadius : innerRadius;
-            const angle = i * step - Math.PI / 2;
-            const px = x + Math.cos(angle) * radius;
-            const py = y + Math.sin(angle) * radius;
+        // Add crescent moons
+        for (let i = 0; i < 8; i++) {
+            const moon = this.add.graphics();
+            const x = Phaser.Math.Between(100, width - 100);
+            const y = Phaser.Math.Between(100, height - 100);
             
-            if (i === 0) {
-                path.push(['moveTo', px, py]);
-            } else {
-                path.push(['lineTo', px, py]);
-            }
+            moon.fillStyle(0xFFD700, 0.15);
+            this.drawCrescent(moon, 0, 0, 15);
+            moon.setPosition(x, y);
+            
+            this.tweens.add({
+                targets: moon,
+                rotation: Math.PI * 2,
+                duration: Phaser.Math.Between(8000, 12000),
+                repeat: -1,
+                ease: 'Linear'
+            });
         }
-        
-        path.push(['closePath']);
-        
-        graphics.beginPath();
-        path.forEach(([method, ...args]) => {
-            graphics[method](...args);
-        });
-        graphics.fillPath();
     }
 
-    createTitle() {
+    createIslamicTitle() {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
         
-        // Arabic title
-        const arabicTitle = this.add.text(width / 2, height * 0.15, 'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ', {
-            fontSize: Math.min(width * 0.05, 32) + 'px',
-            fontFamily: 'Amiri, serif',
-            fill: '#FFD700',
+        // Main title with shadow effect
+        const titleShadow = this.add.text(width/2 + 3, height * 0.15 + 3, 'Islamic Quiz', {
+            fontSize: '48px',
+            fontFamily: 'Inter, sans-serif',
+            fontWeight: 'bold',
+            fill: '#000000',
+            align: 'center'
+        }).setOrigin(0.5).setAlpha(0.3);
+        
+        const title = this.add.text(width/2, height * 0.15, 'Islamic Quiz', {
+            fontSize: '48px',
+            fontFamily: 'Inter, sans-serif',
+            fontWeight: 'bold',
+            fill: '#FFFFFF',
             align: 'center',
             stroke: '#1B5E20',
             strokeThickness: 2
         }).setOrigin(0.5);
         
-        // English title
-        const englishTitle = this.add.text(width / 2, height * 0.25, 'Islamic Quiz Card Game', {
-            fontSize: Math.min(width * 0.06, 36) + 'px',
-            fontFamily: 'Inter, sans-serif',
-            fontStyle: 'bold',
-            fill: '#FFFFFF',
-            align: 'center',
-            stroke: '#1B5E20',
-            strokeThickness: 3
-        }).setOrigin(0.5);
-        
         // Subtitle
-        const subtitle = this.add.text(width / 2, height * 0.32, 'Test Your Islamic Knowledge', {
-            fontSize: Math.min(width * 0.025, 18) + 'px',
+        const subtitle = this.add.text(width/2, height * 0.2, 'Card Game', {
+            fontSize: '24px',
             fontFamily: 'Inter, sans-serif',
+            fontWeight: '300',
             fill: '#E8F5E8',
             align: 'center'
         }).setOrigin(0.5);
         
-        // Title animations
+        // Arabic bismillah
+        const bismillah = this.add.text(width/2, height * 0.26, 'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ', {
+            fontSize: '20px',
+            fontFamily: 'Amiri, serif',
+            fill: '#FFD700',
+            align: 'center'
+        }).setOrigin(0.5);
+        
+        // Gentle pulsing animation for title
         this.tweens.add({
-            targets: arabicTitle,
-            y: arabicTitle.y - 10,
+            targets: title,
+            scaleX: 1.05,
+            scaleY: 1.05,
             duration: 2000,
             yoyo: true,
             repeat: -1,
@@ -154,259 +157,272 @@ class MenuScene extends Phaser.Scene {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
         
-        // Player name label
-        this.add.text(width / 2, height * 0.45, 'Enter Your Name:', {
-            fontSize: '18px',
+        // Input container
+        const inputBg = this.add.graphics();
+        inputBg.fillStyle(0xFFFFFF, 0.95);
+        inputBg.lineStyle(3, 0xFFD700, 1);
+        inputBg.fillRoundedRect(width/2 - 150, height * 0.35 - 25, 300, 50, 25);
+        inputBg.strokeRoundedRect(width/2 - 150, height * 0.35 - 25, 300, 50, 25);
+        
+        // Input label
+        this.add.text(width/2, height * 0.32, 'Enter Your Name', {
+            fontSize: '16px',
             fontFamily: 'Inter, sans-serif',
+            fontWeight: '500',
             fill: '#FFFFFF',
             align: 'center'
         }).setOrigin(0.5);
         
-        // Create HTML input element
-        const inputElement = document.createElement('input');
-        inputElement.type = 'text';
-        inputElement.placeholder = 'Your Name';
-        inputElement.value = localStorage.getItem('playerName') || '';
-        inputElement.maxLength = 20;
-        inputElement.style.cssText = `
-            position: absolute;
-            left: 50%;
-            top: ${height * 0.5}px;
-            transform: translateX(-50%);
-            width: 200px;
-            height: 40px;
-            font-size: 16px;
-            text-align: center;
-            border: 2px solid #FFD700;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.9);
-            color: #1B5E20;
-            font-family: 'Inter', sans-serif;
-            font-weight: 500;
-        `;
-        
-        document.body.appendChild(inputElement);
-        
-        // Store reference to clean up later
-        this.nameInput = inputElement;
-        
-        // Update player name when typing
-        inputElement.addEventListener('input', (e) => {
-            this.playerName = e.target.value;
-            localStorage.setItem('playerName', this.playerName);
-        });
-        
-        // Set initial value
-        this.playerName = inputElement.value;
-    }
-
-    createMenuButtons() {
-        const width = this.cameras.main.width;
-        const height = this.cameras.main.height;
-        
-        const buttonY = height * 0.6;
-        const buttonSpacing = 80;
-        
-        // Quick Match button
-        const quickMatchBtn = this.createButton(width / 2, buttonY, 'Quick Match', () => {
-            this.startQuickMatch();
-        });
-        
-        // Create Room button
-        const createRoomBtn = this.createButton(width / 2, buttonY + buttonSpacing, 'Create Room', () => {
-            this.createRoom();
-        });
-        
-        // Join Room button
-        const joinRoomBtn = this.createButton(width / 2, buttonY + buttonSpacing * 2, 'Join Room', () => {
-            this.showJoinRoomDialog();
-        });
-        
-        // Practice Mode button
-        const practiceBtn = this.createButton(width / 2, buttonY + buttonSpacing * 3, 'Practice Mode', () => {
-            this.startPracticeMode();
-        });
-        
-        // Store button references
-        this.menuButtons = [quickMatchBtn, createRoomBtn, joinRoomBtn, practiceBtn];
-    }
-
-    createButton(x, y, text, callback) {
-        const button = this.add.image(x, y, 'button').setInteractive();
-        
-        const buttonText = this.add.text(x, y, text, {
-            fontSize: '16px',
+        // Name display
+        this.nameDisplay = this.add.text(width/2, height * 0.35, 'Click to enter name...', {
+            fontSize: '18px',
             fontFamily: 'Inter, sans-serif',
-            fontStyle: 'bold',
             fill: '#1B5E20',
             align: 'center'
         }).setOrigin(0.5);
         
-        // Button hover effects
-        button.on('pointerover', () => {
-            button.setTint(0xFFE082);
-            buttonText.setStyle({ fill: '#0D4715' });
-            this.tweens.add({
-                targets: [button, buttonText],
-                scaleX: 1.05,
-                scaleY: 1.05,
-                duration: 200,
-                ease: 'Power2'
-            });
-        });
+        // Make input clickable
+        const inputZone = this.add.zone(width/2, height * 0.35, 300, 50);
+        inputZone.setInteractive({ cursor: 'pointer' });
+        inputZone.on('pointerdown', () => this.showNameInput());
         
-        button.on('pointerout', () => {
-            button.clearTint();
-            buttonText.setStyle({ fill: '#1B5E20' });
-            this.tweens.add({
-                targets: [button, buttonText],
-                scaleX: 1,
-                scaleY: 1,
-                duration: 200,
-                ease: 'Power2'
-            });
-        });
-        
-        button.on('pointerdown', () => {
-            this.tweens.add({
-                targets: [button, buttonText],
-                scaleX: 0.95,
-                scaleY: 0.95,
-                duration: 100,
-                yoyo: true,
-                ease: 'Power2'
-            });
-        });
-        
-        button.on('pointerup', callback);
-        
-        return { button, text: buttonText };
+        this.inputBg = inputBg;
+        this.inputZone = inputZone;
     }
 
-    createConnectionStatus() {
+    showNameInput() {
+        const name = prompt('Enter your name:');
+        if (name && name.trim()) {
+            this.playerName = name.trim();
+            this.nameDisplay.setText(this.playerName);
+            this.enableMenuButtons();
+        }
+    }
+
+    createModernMenuButtons() {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
         
-        this.connectionStatus = this.add.text(width / 2, height * 0.9, 'Connecting to server...', {
-            fontSize: '14px',
+        const buttonData = [
+            { text: '⚡ Quick Match', key: 'quick', color: 0xFF6B35, y: height * 0.5 },
+            { text: '🏠 Create Room', key: 'create', color: 0x4CAF50, y: height * 0.58 },
+            { text: '🚪 Join Room', key: 'join', color: 0x2196F3, y: height * 0.66 },
+            { text: '📚 Practice', key: 'practice', color: 0x9C27B0, y: height * 0.74 }
+        ];
+        
+        this.buttons = [];
+        
+        buttonData.forEach((data, index) => {
+            const button = this.createGameButton(width/2, data.y, data.text, data.color, () => {
+                this.handleMenuAction(data.key);
+            });
+            
+            // Initially disabled
+            button.setAlpha(0.5);
+            button.disableInteractive();
+            this.buttons.push(button);
+            
+            // Staggered entrance animation
+            this.tweens.add({
+                targets: button,
+                x: width/2,
+                alpha: button.alpha,
+                duration: 500,
+                delay: index * 100,
+                ease: 'Back.easeOut'
+            });
+        });
+    }
+
+    createGameButton(x, y, text, color, callback) {
+        const container = this.add.container(x - 400, y);
+        
+        // Button background with gradient effect
+        const bg = this.add.graphics();
+        bg.fillGradientStyle(color, color, Phaser.Display.Color.GetColor32(
+            Phaser.Display.Color.Lighten(Phaser.Display.Color.ColorToRGBA(color), 20)
+        ), color);
+        bg.fillRoundedRect(-120, -25, 240, 50, 25);
+        
+        // Button border
+        const border = this.add.graphics();
+        border.lineStyle(2, 0xFFD700, 0.8);
+        border.strokeRoundedRect(-120, -25, 240, 50, 25);
+        
+        // Button text
+        const buttonText = this.add.text(0, 0, text, {
+            fontSize: '18px',
             fontFamily: 'Inter, sans-serif',
-            fill: '#FFD700',
+            fontWeight: '600',
+            fill: '#FFFFFF',
             align: 'center'
         }).setOrigin(0.5);
         
-        // Connection indicator
-        this.connectionIndicator = this.add.circle(width / 2 - 100, height * 0.9, 6, 0xFF6B6B);
+        container.add([bg, border, buttonText]);
+        container.setSize(240, 50);
+        container.setInteractive({ cursor: 'pointer' });
         
-        // Try to connect
-        this.connectToServer();
+        // Hover effects
+        container.on('pointerover', () => {
+            container.setScale(1.05);
+            border.lineStyle(3, 0xFFD700, 1);
+            border.clear();
+            border.strokeRoundedRect(-120, -25, 240, 50, 25);
+        });
+        
+        container.on('pointerout', () => {
+            container.setScale(1);
+            border.lineStyle(2, 0xFFD700, 0.8);
+            border.clear();
+            border.strokeRoundedRect(-120, -25, 240, 50, 25);
+        });
+        
+        container.on('pointerdown', callback);
+        
+        return container;
     }
 
-    setupNetworkListeners() {
-        this.networkManager.on('roomJoined', (data) => {
-            console.log('Room joined:', data);
-            this.scene.start('LobbyScene', { roomData: data });
-        });
-        
-        this.networkManager.on('error', (error) => {
-            this.showErrorMessage('Connection error: ' + error.message);
-        });
-        
-        this.networkManager.on('disconnected', (reason) => {
-            this.updateConnectionStatus('Disconnected', false);
+    enableMenuButtons() {
+        this.buttons.forEach(button => {
+            button.setAlpha(1);
+            button.setInteractive({ cursor: 'pointer' });
         });
     }
 
-    async connectToServer() {
-        try {
-            const playerName = this.playerName || 'Anonymous';
-            await this.networkManager.connect(playerName);
-            this.updateConnectionStatus('Connected', true);
-        } catch (error) {
-            console.error('Failed to connect:', error);
-            this.updateConnectionStatus('Connection failed', false);
+    createFooter() {
+        const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
+        
+        // Connection status
+        this.connectionStatus = this.add.text(width/2, height * 0.9, '🔴 Connecting to server...', {
+            fontSize: '14px',
+            fontFamily: 'Inter, sans-serif',
+            fill: '#E8F5E8',
+            align: 'center'
+        }).setOrigin(0.5);
+        
+        // Version info
+        this.add.text(width/2, height * 0.95, 'Ummah360 Islamic Quiz v1.0', {
+            fontSize: '12px',
+            fontFamily: 'Inter, sans-serif',
+            fill: '#A5D6A7',
+            align: 'center'
+        }).setOrigin(0.5);
+    }
+
+    handleMenuAction(action) {
+        if (!this.playerName) {
+            this.showNameInput();
+            return;
         }
-    }
-
-    updateConnectionStatus(message, connected) {
-        this.connectionStatus.setText(message);
-        this.connectionIndicator.setFillStyle(connected ? 0x4CAF50 : 0xFF6B6B);
+        
+        switch (action) {
+            case 'quick':
+                this.startQuickMatch();
+                break;
+            case 'create':
+                this.createRoom();
+                break;
+            case 'join':
+                this.joinRoom();
+                break;
+            case 'practice':
+                this.startPractice();
+                break;
+        }
     }
 
     startQuickMatch() {
-        if (!this.validatePlayerName()) return;
-        
-        if (this.networkManager.isConnected) {
-            this.networkManager.joinRandomRoom('quick_match');
-        } else {
-            this.showErrorMessage('Not connected to server');
-        }
+        console.log('Starting quick match...');
+        this.scene.start('LobbyScene', { 
+            mode: 'quick', 
+            playerName: this.playerName,
+            networkManager: this.networkManager 
+        });
     }
 
     createRoom() {
-        if (!this.validatePlayerName()) return;
-        
-        if (this.networkManager.isConnected) {
-            this.networkManager.createRoom('custom');
-        } else {
-            this.showErrorMessage('Not connected to server');
+        console.log('Creating room...');
+        this.scene.start('LobbyScene', { 
+            mode: 'create', 
+            playerName: this.playerName,
+            networkManager: this.networkManager 
+        });
+    }
+
+    joinRoom() {
+        const roomCode = prompt('Enter room code:');
+        if (roomCode) {
+            console.log('Joining room:', roomCode);
+            this.scene.start('LobbyScene', { 
+                mode: 'join', 
+                roomCode: roomCode,
+                playerName: this.playerName,
+                networkManager: this.networkManager 
+            });
         }
     }
 
-    showJoinRoomDialog() {
-        if (!this.validatePlayerName()) return;
-        
-        const roomId = prompt('Enter Room ID:');
-        if (roomId && roomId.trim()) {
-            this.networkManager.joinRoom(roomId.trim());
-        }
-    }
-
-    startPracticeMode() {
-        if (!this.validatePlayerName()) return;
-        
-        // Start practice mode (offline)
+    startPractice() {
+        console.log('Starting practice mode...');
         this.scene.start('GameScene', { 
-            gameMode: 'practice',
+            mode: 'practice', 
             playerName: this.playerName 
         });
     }
 
-    validatePlayerName() {
-        if (!this.playerName || this.playerName.trim().length < 2) {
-            this.showErrorMessage('Please enter a name (at least 2 characters)');
-            return false;
-        }
-        return true;
-    }
-
-    showErrorMessage(message) {
-        // Create error message popup
-        const width = this.cameras.main.width;
-        const height = this.cameras.main.height;
-        
-        const errorBg = this.add.rectangle(width / 2, height / 2, width * 0.8, 100, 0xFF6B6B, 0.9);
-        const errorText = this.add.text(width / 2, height / 2, message, {
-            fontSize: '16px',
-            fontFamily: 'Inter, sans-serif',
-            fill: '#FFFFFF',
-            align: 'center',
-            wordWrap: { width: width * 0.7 }
-        }).setOrigin(0.5);
-        
-        // Auto-hide after 3 seconds
-        this.time.delayedCall(3000, () => {
-            errorBg.destroy();
-            errorText.destroy();
+    setupInputHandlers() {
+        // ESC key to reset
+        this.input.keyboard.on('keydown-ESC', () => {
+            this.scene.restart();
         });
     }
 
-    destroy() {
-        // Clean up HTML input element
-        if (this.nameInput && this.nameInput.parentNode) {
-            this.nameInput.parentNode.removeChild(this.nameInput);
-        }
+    setupNetworkListeners() {
+        if (!this.networkManager) return;
         
-        super.destroy();
+        // Try to connect
+        this.networkManager.connect(this.playerName || 'Anonymous')
+            .then(() => {
+                this.isConnected = true;
+                this.connectionStatus.setText('🟢 Connected to server');
+                this.connectionStatus.setTint(0x4CAF50);
+            })
+            .catch((error) => {
+                this.isConnected = false;
+                this.connectionStatus.setText('🔴 Connection failed');
+                this.connectionStatus.setTint(0xFF5722);
+                console.error('Connection failed:', error);
+            });
+    }
+
+    // Helper drawing methods
+    drawStar(graphics, x, y, points, outerRadius, innerRadius) {
+        const step = Math.PI / points;
+        
+        graphics.beginPath();
+        for (let i = 0; i <= points * 2; i++) {
+            const radius = i % 2 === 0 ? outerRadius : innerRadius;
+            const angle = i * step - Math.PI / 2;
+            const px = x + Math.cos(angle) * radius;
+            const py = y + Math.sin(angle) * radius;
+            
+            if (i === 0) {
+                graphics.moveTo(px, py);
+            } else {
+                graphics.lineTo(px, py);
+            }
+        }
+        graphics.closePath();
+        graphics.fillPath();
+    }
+
+    drawCrescent(graphics, x, y, radius) {
+        graphics.beginPath();
+        graphics.arc(x, y, radius, 0, Math.PI * 2);
+        graphics.arc(x + radius * 0.3, y, radius * 0.8, 0, Math.PI * 2);
+        graphics.closePath();
+        graphics.fillPath();
     }
 }
 
