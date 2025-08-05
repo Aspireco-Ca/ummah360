@@ -80,9 +80,9 @@ class Card extends Phaser.GameObjects.Container {
             case 'blessing':
                 // Star of blessing
                 iconGraphics.fillStyle(0xFFD700);
-                iconGraphics.fillStar(0, -20, 8, 15, 8);
+                this.drawStar(iconGraphics, 0, -20, 8, 15, 8);
                 iconGraphics.lineStyle(2, 0x1B5E20);
-                iconGraphics.strokeStar(0, -20, 8, 15, 8);
+                this.drawStarOutline(iconGraphics, 0, -20, 8, 15, 8);
                 break;
                 
             case 'challenge':
@@ -118,7 +118,7 @@ class Card extends Phaser.GameObjects.Container {
             default:
                 // Default Islamic star
                 iconGraphics.fillStyle(0xFFD700);
-                iconGraphics.fillStar(0, -20, 8, 12, 6);
+                this.drawStar(iconGraphics, 0, -20, 8, 12, 6);
                 break;
         }
         
@@ -163,6 +163,58 @@ class Card extends Phaser.GameObjects.Container {
         pattern.strokePath();
         
         return pattern;
+    }
+
+    drawStar(graphics, x, y, points, outerRadius, innerRadius) {
+        const step = Math.PI / points;
+        let path = [];
+        
+        for (let i = 0; i <= points * 2; i++) {
+            const radius = i % 2 === 0 ? outerRadius : innerRadius;
+            const angle = i * step - Math.PI / 2;
+            const px = x + Math.cos(angle) * radius;
+            const py = y + Math.sin(angle) * radius;
+            
+            if (i === 0) {
+                path.push(['moveTo', px, py]);
+            } else {
+                path.push(['lineTo', px, py]);
+            }
+        }
+        
+        path.push(['closePath']);
+        
+        graphics.beginPath();
+        path.forEach(([method, ...args]) => {
+            graphics[method](...args);
+        });
+        graphics.fillPath();
+    }
+
+    drawStarOutline(graphics, x, y, points, outerRadius, innerRadius) {
+        const step = Math.PI / points;
+        let path = [];
+        
+        for (let i = 0; i <= points * 2; i++) {
+            const radius = i % 2 === 0 ? outerRadius : innerRadius;
+            const angle = i * step - Math.PI / 2;
+            const px = x + Math.cos(angle) * radius;
+            const py = y + Math.sin(angle) * radius;
+            
+            if (i === 0) {
+                path.push(['moveTo', px, py]);
+            } else {
+                path.push(['lineTo', px, py]);
+            }
+        }
+        
+        path.push(['closePath']);
+        
+        graphics.beginPath();
+        path.forEach(([method, ...args]) => {
+            graphics[method](...args);
+        });
+        graphics.strokePath();
     }
 
     updateCardBorder() {

@@ -64,7 +64,9 @@ class MenuScene extends Phaser.Scene {
             const size = Phaser.Math.Between(3, 8);
             
             star.fillStyle(0xFFD700, 0.3);
-            star.fillStar(x, y, 8, size, size * 0.5);
+            
+            // Draw star manually using paths (fillStar doesn't exist in Phaser 3)
+            this.drawStar(star, x, y, 8, size, size * 0.5);
             
             // Add twinkling animation
             this.tweens.add({
@@ -76,6 +78,32 @@ class MenuScene extends Phaser.Scene {
                 ease: 'Sine.easeInOut'
             });
         }
+    }
+
+    drawStar(graphics, x, y, points, outerRadius, innerRadius) {
+        const step = Math.PI / points;
+        let path = [];
+        
+        for (let i = 0; i <= points * 2; i++) {
+            const radius = i % 2 === 0 ? outerRadius : innerRadius;
+            const angle = i * step - Math.PI / 2;
+            const px = x + Math.cos(angle) * radius;
+            const py = y + Math.sin(angle) * radius;
+            
+            if (i === 0) {
+                path.push(['moveTo', px, py]);
+            } else {
+                path.push(['lineTo', px, py]);
+            }
+        }
+        
+        path.push(['closePath']);
+        
+        graphics.beginPath();
+        path.forEach(([method, ...args]) => {
+            graphics[method](...args);
+        });
+        graphics.fillPath();
     }
 
     createTitle() {
