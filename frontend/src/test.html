@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Test - Islamic Quiz</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 100%);
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin: 0;
+        }
+        .test-result {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🕌 Islamic Quiz - Debug Test</h1>
+    
+    <div class="test-result" id="basic-test">
+        ❌ JavaScript Test: Not executed
+    </div>
+    
+    <div class="test-result" id="dom-test">
+        ❌ DOM Test: Not executed
+    </div>
+    
+    <div class="test-result" id="fetch-test">
+        ❌ API Test: Not executed
+    </div>
+    
+    <div class="test-result" id="phaser-test">
+        ❌ Phaser Test: Not executed
+    </div>
+
+    <script>
+        console.log('🧪 Debug test page loaded');
+        
+        // Test 1: Basic JavaScript
+        document.getElementById('basic-test').innerHTML = '✅ JavaScript Test: Working!';
+        
+        // Test 2: DOM manipulation
+        setTimeout(() => {
+            document.getElementById('dom-test').innerHTML = '✅ DOM Test: Working!';
+        }, 500);
+        
+        // Test 3: API test
+        fetch('/health')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('fetch-test').innerHTML = '✅ API Test: Server healthy!';
+            })
+            .catch(error => {
+                document.getElementById('fetch-test').innerHTML = '❌ API Test: ' + error.message;
+            });
+        
+        // Test 4: Check if Phaser is available
+        setTimeout(() => {
+            try {
+                if (typeof window.Phaser !== 'undefined') {
+                    document.getElementById('phaser-test').innerHTML = '✅ Phaser Test: Available!';
+                } else {
+                    document.getElementById('phaser-test').innerHTML = '❌ Phaser Test: Not loaded in window';
+                }
+            } catch (e) {
+                document.getElementById('phaser-test').innerHTML = '❌ Phaser Test: Error - ' + e.message;
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

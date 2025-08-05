@@ -108,6 +108,12 @@ class IslamicQuizServer {
         this.app.use('/api/rooms', require('./routes/rooms'));
         this.app.use('/api/leaderboard', require('./routes/leaderboard'));
 
+        // Debug test route
+        this.app.get('/test', (req, res) => {
+            const testPath = path.join(__dirname, '../frontend/src/test.html');
+            res.sendFile(testPath);
+        });
+
         // Root route - serve the game frontend
         this.app.get('/', (req, res) => {
             const indexPath = path.join(__dirname, '../frontend/dist/index.html');
