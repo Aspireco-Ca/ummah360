@@ -75,12 +75,22 @@ class IslamicQuizServer {
         this.app.use(express.json({ limit: '10mb' }));
         this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-        // Static files - serve frontend assets
-        this.app.use(express.static(path.join(__dirname, '../frontend/dist')));
+        // Static files - serve frontend assets with absolute path
+        const staticPath = path.resolve(__dirname, '../frontend/dist');
+        console.log('🗂️ Serving static files from:', staticPath);
+        this.app.use(express.static(staticPath));
+        
+        // Also serve assets specifically
+        const assetsPath = path.resolve(__dirname, '../frontend/dist/assets');
+        console.log('🎨 Serving assets from:', assetsPath);
+        this.app.use('/assets', express.static(assetsPath));
 
-        // Logging
+        // Enhanced logging for debugging asset requests
         this.app.use((req, res, next) => {
             console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+            if (req.path.includes('/assets/')) {
+                console.log(`🎯 Asset request: ${req.path}`);
+            }
             next();
         });
     }
