@@ -6,6 +6,8 @@ class BootScene extends Phaser.Scene {
     }
 
     preload() {
+        console.log('🚀 BootScene preload starting...');
+        
         // Create a loading bar
         this.createLoadingBar();
         
@@ -15,6 +17,8 @@ class BootScene extends Phaser.Scene {
         // Set up progress tracking
         this.load.on('progress', this.updateLoadingBar, this);
         this.load.on('complete', this.loadComplete, this);
+        
+        console.log('📋 Preload setup complete');
     }
 
     createLoadingBar() {
@@ -122,11 +126,17 @@ class BootScene extends Phaser.Scene {
         // Add event handlers for file loading
         this.load.on('loaderror', (fileObj) => {
             console.error(`❌ Failed to load: ${fileObj.key} from ${fileObj.url}`);
-            // The placeholder assets will be used as fallback
+            // Continue anyway - placeholder assets will be used as fallback
         });
         
         this.load.on('filecomplete', (key, type, data) => {
             console.log(`✅ Successfully loaded: ${key} (${type})`);
+        });
+        
+        // Add timeout fallback in case loading hangs
+        this.time.delayedCall(10000, () => {
+            console.warn('⚠️ Loading timeout - forcing transition to MenuScene');
+            this.scene.start('MenuScene');
         });
     }
 
@@ -226,15 +236,19 @@ class BootScene extends Phaser.Scene {
     }
 
     loadComplete() {
+        console.log('✅ BootScene loading complete!');
         this.statusText.setText('Ready! الحمد لله');
         
         // Add a short delay before transitioning
         this.time.delayedCall(1000, () => {
+            console.log('🎮 Transitioning to MenuScene...');
             this.scene.start('MenuScene');
         });
     }
 
     create() {
+        console.log('🎨 BootScene create called');
+        
         // Add background pattern
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
@@ -245,6 +259,12 @@ class BootScene extends Phaser.Scene {
                 this.add.image(x, y, 'bg-pattern').setOrigin(0, 0).setAlpha(0.1);
             }
         }
+        
+        // DEBUG: Force transition after 5 seconds if nothing else works
+        this.time.delayedCall(5000, () => {
+            console.warn('🚨 DEBUG: Force transitioning to MenuScene after 5 seconds');
+            this.scene.start('MenuScene');
+        });
     }
 }
 
