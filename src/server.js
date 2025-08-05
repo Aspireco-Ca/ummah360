@@ -114,8 +114,20 @@ class IslamicQuizServer {
             res.sendFile(testPath);
         });
 
-        // Root route - serve the game frontend
+        // Simple working version route
+        this.app.get('/simple', (req, res) => {
+            const simplePath = path.join(__dirname, '../frontend/src/simple.html');
+            res.sendFile(simplePath);
+        });
+
+        // Root route - serve simple version temporarily
         this.app.get('/', (req, res) => {
+            const simplePath = path.join(__dirname, '../frontend/src/simple.html');
+            res.sendFile(simplePath);
+        });
+
+        // Original Phaser version route
+        this.app.get('/game', (req, res) => {
             const indexPath = path.join(__dirname, '../frontend/dist/index.html');
             res.sendFile(indexPath, (err) => {
                 if (err) {
