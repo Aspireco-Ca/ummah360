@@ -102,6 +102,9 @@ class BootScene extends Phaser.Scene {
             { key: 'ui-frame-gold', path: 'ui/frame-gold.png' }
         ];
         
+        // TEMPORARY: Skip asset loading to get game working first
+        console.log('⚠️ SKIPPING asset loading temporarily to debug game flow');
+        /*
         // Load the card assets (now available)
         console.log('🎴 Loading card assets...');
         cardAssets.forEach(asset => {
@@ -115,6 +118,7 @@ class BootScene extends Phaser.Scene {
             console.log(`Loading background: ${asset.key} from ${asset.path}`);
             this.load.image(asset.key, asset.path);
         });
+        */
         
         // UI assets will be loaded when provided
         /*
@@ -133,11 +137,11 @@ class BootScene extends Phaser.Scene {
             console.log(`✅ Successfully loaded: ${key} (${type})`);
         });
         
-        // Add timeout fallback in case loading hangs
-        this.time.delayedCall(10000, () => {
-            console.warn('⚠️ Loading timeout - forcing transition to MenuScene');
-            this.scene.start('MenuScene');
-        });
+        // Add timeout fallback in case loading hangs (disabled for now)
+        // this.time.delayedCall(10000, () => {
+        //     console.warn('⚠️ Loading timeout - forcing transition to MenuScene');
+        //     this.scene.start('MenuScene');
+        // });
     }
 
     createPlaceholderAssets() {
@@ -260,9 +264,9 @@ class BootScene extends Phaser.Scene {
             }
         }
         
-        // DEBUG: Force transition after 5 seconds if nothing else works
-        this.time.delayedCall(5000, () => {
-            console.warn('🚨 DEBUG: Force transitioning to MenuScene after 5 seconds');
+        // DEBUG: Force transition after 3 seconds for testing (temporary)
+        this.time.delayedCall(3000, () => {
+            console.warn('🚨 DEBUG: Force transitioning to MenuScene after 3 seconds');
             this.scene.start('MenuScene');
         });
     }

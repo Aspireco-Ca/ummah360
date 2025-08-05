@@ -75,15 +75,37 @@ class IslamicQuizServer {
         this.app.use(express.json({ limit: '10mb' }));
         this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-        // Static files - serve frontend assets with absolute path
+        // Static files - serve frontend assets with absolute path and proper headers
         const staticPath = path.resolve(__dirname, '../frontend/dist');
         console.log('🗂️ Serving static files from:', staticPath);
-        this.app.use(express.static(staticPath));
+        this.app.use(express.static(staticPath, {
+            setHeaders: (res, path) => {
+                if (path.endsWith('.png')) {
+                    res.set('Content-Type', 'image/png');
+                    res.set('Cache-Control', 'public, max-age=31536000');
+                }
+                if (path.endsWith('.jpg') || path.endsWith('.jpeg')) {
+                    res.set('Content-Type', 'image/jpeg');
+                    res.set('Cache-Control', 'public, max-age=31536000');
+                }
+            }
+        }));
         
-        // Also serve assets specifically
+        // Also serve assets specifically with proper headers
         const assetsPath = path.resolve(__dirname, '../frontend/dist/assets');
         console.log('🎨 Serving assets from:', assetsPath);
-        this.app.use('/assets', express.static(assetsPath));
+        this.app.use('/assets', express.static(assetsPath, {
+            setHeaders: (res, path) => {
+                if (path.endsWith('.png')) {
+                    res.set('Content-Type', 'image/png');
+                    res.set('Cache-Control', 'public, max-age=31536000');
+                }
+                if (path.endsWith('.jpg') || path.endsWith('.jpeg')) {
+                    res.set('Content-Type', 'image/jpeg');
+                    res.set('Cache-Control', 'public, max-age=31536000');
+                }
+            }
+        }));
 
         // Enhanced logging for debugging asset requests
         this.app.use((req, res, next) => {
