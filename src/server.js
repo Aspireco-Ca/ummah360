@@ -75,10 +75,8 @@ class IslamicQuizServer {
         this.app.use(express.json({ limit: '10mb' }));
         this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-        // Static files (for production)
-        if (process.env.NODE_ENV === 'production') {
-            this.app.use(express.static(path.join(__dirname, '../frontend/dist')));
-        }
+        // Static files - serve frontend assets
+        this.app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
         // Logging
         this.app.use((req, res, next) => {
@@ -104,6 +102,20 @@ class IslamicQuizServer {
         this.app.use('/api/questions', require('./routes/questions'));
         this.app.use('/api/rooms', require('./routes/rooms'));
         this.app.use('/api/leaderboard', require('./routes/leaderboard'));
+
+        // Root route - serve the game frontend
+        this.app.get('/', (req, res) => {
+            const indexPath = path.join(__dirname, '../frontend/dist/index.html');
+            res.sendFile(indexPath, (err) => {
+                if (err) {
+                    console.error('Failed to serve index.html:', err);
+                    res.status(500).json({
+                        error: 'Frontend not built',
+                        message: 'Run npm run build to generate frontend files'
+                    });
+                }
+            });
+        });
 
         // Serve frontend in production
         if (process.env.NODE_ENV === 'production') {
