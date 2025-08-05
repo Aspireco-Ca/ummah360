@@ -40,8 +40,13 @@ class Card extends Phaser.GameObjects.Container {
             this.updateCardBorder();
         }
         
-        // Card content (text and icons)
+        // Card content (text and icons) - always create for dynamic content
         this.createCardContent();
+        
+        // Adjust text styling if using templates
+        if (this.scene.textures.exists(templateKey)) {
+            this.adjustTextForTemplate();
+        }
         
         // Add to container
         this.add([this.cardBack, this.cardFront, this.cardBorder]);
@@ -57,6 +62,44 @@ class Card extends Phaser.GameObjects.Container {
         };
         
         return templateMap[this.cardType] || 'card-front';
+    }
+
+    adjustTextForTemplate() {
+        // Adjust text styling for better visibility on templates
+        if (this.titleText) {
+            this.titleText.setStyle({
+                fontSize: '16px',
+                fontFamily: 'Inter, sans-serif',
+                fontWeight: 'bold',
+                fill: '#FFFFFF',
+                stroke: '#000000',
+                strokeThickness: 2,
+                align: 'center',
+                wordWrap: { width: 160 }
+            });
+            this.titleText.y = -60; // Move up to fit in template center area
+        }
+        
+        if (this.descriptionText) {
+            this.descriptionText.setStyle({
+                fontSize: '12px',
+                fontFamily: 'Inter, sans-serif',
+                fill: '#FFFFFF',
+                stroke: '#000000',
+                strokeThickness: 1,
+                align: 'center',
+                wordWrap: { width: 150 }
+            });
+            this.descriptionText.y = -20; // Move up to fit in template center area
+        }
+        
+        // Hide programmatic icons since templates have their own
+        if (this.cardIcon) {
+            this.cardIcon.setVisible(false);
+        }
+        if (this.geometricPattern) {
+            this.geometricPattern.setVisible(false);
+        }
     }
 
     createCardContent() {
