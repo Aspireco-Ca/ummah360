@@ -103,12 +103,13 @@ class BootScene extends Phaser.Scene {
             this.load.image(asset.key, asset.path);
         });
         
-        // Background assets will be loaded when provided
-        /*
+        // Load background assets (uncommented to enable)
         backgroundAssets.forEach(asset => {
             this.load.image(asset.key, asset.path);
         });
         
+        // UI assets will be loaded when provided
+        /*
         uiAssets.forEach(asset => {
             this.load.image(asset.key, asset.path);
         });
