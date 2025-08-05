@@ -74,13 +74,13 @@ class BootScene extends Phaser.Scene {
         // Set the base path for assets
         this.load.setPath('assets/');
         
-        // Load card designs with actual filenames
+        // Load card designs with web-friendly filenames (no spaces)
         const cardAssets = [
-            { key: 'card-back-hd', path: 'cards/Card Back Design.png' },
-            { key: 'card-template-blessing', path: 'cards/Blessing Card Template.png' },
-            { key: 'card-template-challenge', path: 'cards/Challenge Card Template.png' },
-            { key: 'card-template-knowledge', path: 'cards/Knowledge Card Template.png' },
-            { key: 'card-template-wisdom', path: 'cards/Wisdom Card Template.png' }
+            { key: 'card-back-hd', path: 'cards/card-back-design.png' },
+            { key: 'card-template-blessing', path: 'cards/blessing-card-template.png' },
+            { key: 'card-template-challenge', path: 'cards/challenge-card-template.png' },
+            { key: 'card-template-knowledge', path: 'cards/knowledge-card-template.png' },
+            { key: 'card-template-wisdom', path: 'cards/wisdom-card-template.png' }
         ];
         
         // Load background images
