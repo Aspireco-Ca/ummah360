@@ -13,19 +13,11 @@ RUN apk add --no-cache \
     g++ \
     curl
 
-# Copy package files
+# Copy package files  
 COPY package*.json ./
-COPY mobile/package*.json ./mobile/
 
 # Install ALL dependencies (including dev) for build step
 RUN npm install
-
-# Install mobile dependencies
-WORKDIR /app/mobile
-RUN npm install
-
-# Go back to app directory
-WORKDIR /app
 
 # Copy source code
 COPY . .
