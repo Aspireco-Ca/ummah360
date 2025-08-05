@@ -114,6 +114,73 @@ class IslamicQuizServer {
             res.sendFile(testPath);
         });
 
+        // Working version route (bypass cache)
+        this.app.get('/working', (req, res) => {
+            res.send(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Islamic Quiz Card Game - WORKING!</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 100%);
+            font-family: Arial, sans-serif;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .success {
+            background: rgba(0,0,0,0.3);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .title { font-size: 32px; margin-bottom: 20px; }
+        .status { font-size: 18px; margin: 10px 0; }
+        .button {
+            display: inline-block;
+            padding: 15px 30px;
+            margin: 10px;
+            background: #FFD700;
+            color: #1B5E20;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="success">
+        <div class="title">🎉 SUCCESS!</div>
+        <div class="status">✅ Railway deployment is working</div>
+        <div class="status">✅ Server routes are working</div>
+        <div class="status">✅ HTML is rendering properly</div>
+        <div class="status">🕌 Islamic Quiz Card Game</div>
+        <div class="status">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</div>
+        <br>
+        <a href="/" class="button">Back to Home</a>
+        <a href="/game" class="button">Try Phaser Version</a>
+        <div style="margin-top: 20px; font-size: 14px;">
+            Time: ${new Date().toISOString()}<br>
+            This proves the server is working correctly!
+        </div>
+    </div>
+    <script>
+        console.log('✅ JavaScript is working in inline version!');
+        alert('🎮 JavaScript execution confirmed!');
+    </script>
+</body>
+</html>
+            `);
+        });
+
         // Simple working version route
         this.app.get('/simple', (req, res) => {
             const simplePath = path.join(__dirname, '../frontend/src/simple.html');
