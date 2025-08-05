@@ -1,4 +1,5 @@
 # Islamic Quiz Card Game - Docker Configuration
+# Updated: Fixed build dependencies for Railway deployment
 FROM node:20-alpine
 
 # Set working directory
