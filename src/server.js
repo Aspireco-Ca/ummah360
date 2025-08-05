@@ -90,6 +90,8 @@ class IslamicQuizServer {
         this.app.get('/health', (req, res) => {
             res.json({
                 status: 'healthy',
+                version: '2.1-DEBUGGING',
+                deploymentTest: 'Railway cache test - Aug 5, 2025',
                 timestamp: new Date().toISOString(),
                 uptime: process.uptime(),
                 memory: process.memoryUsage(),
