@@ -9,18 +9,19 @@ RUN apk add --no-cache \
     git \
     python3 \
     make \
-    g++
+    g++ \
+    curl
 
 # Copy package files
 COPY package*.json ./
 COPY mobile/package*.json ./mobile/
 
-# Install dependencies
-RUN npm ci --only=production
+# Install ALL dependencies (including dev) for build step
+RUN npm ci
 
 # Install mobile dependencies
 WORKDIR /app/mobile
-RUN npm ci --only=production
+RUN npm ci
 
 # Go back to app directory
 WORKDIR /app
@@ -30,6 +31,9 @@ COPY . .
 
 # Build frontend
 RUN npm run build
+
+# Remove dev dependencies after build to reduce image size
+RUN npm prune --production
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs
