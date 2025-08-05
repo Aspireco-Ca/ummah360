@@ -98,6 +98,11 @@ class IslamicQuizServer {
             });
         });
 
+        // Set managers in app context for route access
+        this.app.set('contentManager', this.contentManager);
+        this.app.set('gameRoomManager', this.gameRoomManager);
+        this.app.set('playerManager', this.playerManager);
+
         // API routes
         this.app.use('/api/questions', require('./routes/questions'));
         this.app.use('/api/rooms', require('./routes/rooms'));
