@@ -360,10 +360,12 @@ class LobbyScene extends Phaser.Scene {
     createActionButton(x, y, text, color, callback) {
         const button = this.add.container(x, y);
         
+        // Create color variations using proper Phaser 3 color methods
+        const baseColor = new Phaser.Display.Color(color);
+        const lightColor = baseColor.clone().lighten(20);
+        
         const bg = this.add.graphics();
-        bg.fillGradientStyle(color, color, Phaser.Display.Color.GetColor32(
-            Phaser.Display.Color.Lighten(Phaser.Display.Color.ColorToRGBA(color), 20)
-        ), color);
+        bg.fillGradientStyle(color, color, lightColor.color, color);
         bg.fillRoundedRect(-80, -20, 160, 40, 20);
         
         const border = this.add.graphics();
