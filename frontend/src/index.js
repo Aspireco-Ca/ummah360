@@ -1,5 +1,9 @@
+console.log('🎮 Starting Islamic Quiz Game...');
+
 import Phaser from 'phaser';
 import './styles/main.css';
+
+console.log('✅ Phaser and CSS imported');
 
 // Import scenes
 import BootScene from './scenes/BootScene';
@@ -7,16 +11,23 @@ import MenuScene from './scenes/MenuScene';
 import GameScene from './scenes/GameScene';
 import LobbyScene from './scenes/LobbyScene';
 
+console.log('✅ All scenes imported');
+
 // Import networking
 import NetworkManager from './networking/NetworkManager';
 
+console.log('✅ NetworkManager imported');
+
 class IslamicQuizGame {
     constructor() {
+        console.log('🏗️ Creating IslamicQuizGame instance...');
         this.networkManager = new NetworkManager();
+        console.log('✅ NetworkManager created');
         this.initializeGame();
     }
 
     initializeGame() {
+        console.log('🚀 Initializing Phaser game...');
         const config = {
             type: Phaser.AUTO,
             width: window.innerWidth,
@@ -59,10 +70,14 @@ class IslamicQuizGame {
             }
         };
 
+        console.log('📝 Phaser config created:', config);
+        
         this.game = new Phaser.Game(config);
+        console.log('✅ Phaser game instance created');
         
         // Global reference for network manager
         this.game.networkManager = this.networkManager;
+        console.log('✅ NetworkManager attached to game');
         
         // Handle window resize
         window.addEventListener('resize', () => {
@@ -93,17 +108,31 @@ class IslamicQuizGame {
     }
 }
 
+console.log('📄 Script loaded, waiting for DOM...');
+
 // Initialize the game when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('✅ DOM Content Loaded!');
+    
     // Clear the game container and remove loading screen
     const gameContainer = document.getElementById('game-container');
+    console.log('🎯 Game container found:', gameContainer);
+    
     if (gameContainer) {
         gameContainer.innerHTML = ''; // Clear loading content
+        console.log('✅ Loading screen cleared');
     }
     
     // Start the game
-    new IslamicQuizGame();
+    console.log('🎮 Starting game initialization...');
+    try {
+        new IslamicQuizGame();
+    } catch (error) {
+        console.error('❌ Failed to create game:', error);
+    }
 });
+
+console.log('📋 Event listener registered');
 
 // Handle page visibility for performance optimization
 document.addEventListener('visibilitychange', () => {

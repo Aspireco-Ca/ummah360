@@ -82,7 +82,17 @@
             <div class="loading-spinner"></div>
             <p>بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</p>
             <p>Loading Islamic Quiz Card Game...</p>
+            <p id="debug-status">🔍 Testing JavaScript...</p>
         </div>
     </div>
+
+    <script>
+        console.log('📋 Inline script executing');
+        document.getElementById('debug-status').textContent = '✅ JavaScript works!';
+        setTimeout(() => {
+            const status = document.getElementById('debug-status');
+            status.textContent = '⏳ Waiting for bundle.js...';
+        }, 1000);
+    </script>
 </body>
 </html>
