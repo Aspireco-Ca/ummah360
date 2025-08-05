@@ -201,3 +201,6 @@ docs/build/
 *.njsproj
 *.sln
 *.sw?
+
+# Claude Code assistant files
+.claude/
