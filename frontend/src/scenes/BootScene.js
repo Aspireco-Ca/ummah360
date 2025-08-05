@@ -56,7 +56,10 @@ class BootScene extends Phaser.Scene {
     }
 
     loadAssets() {
-        // Create placeholder assets programmatically
+        // Try to load actual assets first, fall back to placeholders if not found
+        this.loadImageAssets();
+        
+        // Create placeholder assets as fallback
         this.createPlaceholderAssets();
         
         // Load audio files (if available)
@@ -65,6 +68,57 @@ class BootScene extends Phaser.Scene {
         
         // Load fonts if needed
         this.loadFonts();
+    }
+
+    loadImageAssets() {
+        // Set the base path for assets
+        this.load.setPath('assets/');
+        
+        // Load card designs (these will be added when you provide the images)
+        const cardAssets = [
+            { key: 'card-back-hd', path: 'cards/card-back.png' },
+            { key: 'card-template-blessing', path: 'cards/card-template-blessing.png' },
+            { key: 'card-template-challenge', path: 'cards/card-template-challenge.png' },
+            { key: 'card-template-knowledge', path: 'cards/card-template-knowledge.png' },
+            { key: 'card-template-wisdom', path: 'cards/card-template-wisdom.png' }
+        ];
+        
+        // Load background images
+        const backgroundAssets = [
+            { key: 'bg-menu', path: 'backgrounds/bg-menu.jpg' },
+            { key: 'bg-game', path: 'backgrounds/bg-game.jpg' },
+            { key: 'bg-lobby', path: 'backgrounds/bg-lobby.jpg' },
+            { key: 'bg-victory', path: 'backgrounds/bg-victory.jpg' }
+        ];
+        
+        // Load UI elements
+        const uiAssets = [
+            { key: 'ui-button-primary', path: 'ui/button-primary.png' },
+            { key: 'ui-button-secondary', path: 'ui/button-secondary.png' },
+            { key: 'ui-frame-gold', path: 'ui/frame-gold.png' }
+        ];
+        
+        // Check if assets exist before loading
+        // For now, we'll comment these out until the actual images are provided
+        /*
+        cardAssets.forEach(asset => {
+            this.load.image(asset.key, asset.path);
+        });
+        
+        backgroundAssets.forEach(asset => {
+            this.load.image(asset.key, asset.path);
+        });
+        
+        uiAssets.forEach(asset => {
+            this.load.image(asset.key, asset.path);
+        });
+        */
+        
+        // Add event handlers for missing files
+        this.load.on('loaderror', (fileObj) => {
+            console.warn(`Failed to load: ${fileObj.key} from ${fileObj.url}`);
+            // The placeholder assets will be used as fallback
+        });
     }
 
     createPlaceholderAssets() {

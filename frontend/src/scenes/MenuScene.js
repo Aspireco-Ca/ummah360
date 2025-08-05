@@ -45,25 +45,42 @@ class MenuScene extends Phaser.Scene {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
         
-        // Create gradient background using proper Phaser 3 method
-        const bg = this.add.graphics();
-        
-        // Islamic green gradient
-        bg.fillGradientStyle(
-            0x0A4B0F, // Dark green top-left
-            0x1B5E20, // Medium green top-right  
-            0x2E7D32, // Lighter green bottom-left
-            0x1B5E20  // Medium green bottom-right
-        );
-        bg.fillRect(0, 0, width, height);
-        
-        // Add subtle Islamic pattern overlay
-        this.createPatternOverlay();
-        
-        // Add ambient lighting effect
-        const overlay = this.add.graphics();
-        overlay.fillStyle(0x000000, 0.15);
-        overlay.fillRect(0, 0, width, height);
+        // Check if HD background is available
+        if (this.textures.exists('bg-menu')) {
+            // Use the high-quality background image
+            const bg = this.add.image(width/2, height/2, 'bg-menu');
+            
+            // Scale to cover the entire screen while maintaining aspect ratio
+            const scaleX = width / bg.width;
+            const scaleY = height / bg.height;
+            const scale = Math.max(scaleX, scaleY);
+            bg.setScale(scale);
+            
+            // Add subtle overlay for better text readability
+            const overlay = this.add.graphics();
+            overlay.fillStyle(0x000000, 0.3);
+            overlay.fillRect(0, 0, width, height);
+        } else {
+            // Fallback to programmatic gradient background
+            const bg = this.add.graphics();
+            
+            // Islamic green gradient
+            bg.fillGradientStyle(
+                0x0A4B0F, // Dark green top-left
+                0x1B5E20, // Medium green top-right  
+                0x2E7D32, // Lighter green bottom-left
+                0x1B5E20  // Medium green bottom-right
+            );
+            bg.fillRect(0, 0, width, height);
+            
+            // Add subtle Islamic pattern overlay
+            this.createPatternOverlay();
+            
+            // Add ambient lighting effect
+            const overlay = this.add.graphics();
+            overlay.fillStyle(0x000000, 0.15);
+            overlay.fillRect(0, 0, width, height);
+        }
     }
 
     createPatternOverlay() {

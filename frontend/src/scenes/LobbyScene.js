@@ -67,18 +67,35 @@ class LobbyScene extends Phaser.Scene {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
         
-        // Gradient background
-        const bg = this.add.graphics();
-        bg.fillGradientStyle(0x0D4E12, 0x1B5E20, 0x2E7D32, 0x1B5E20);
-        bg.fillRect(0, 0, width, height);
+        // Check if HD background is available
+        if (this.textures.exists('bg-lobby')) {
+            // Use the high-quality background image
+            const bg = this.add.image(width/2, height/2, 'bg-lobby');
+            
+            // Scale to cover the entire screen while maintaining aspect ratio
+            const scaleX = width / bg.width;
+            const scaleY = height / bg.height;
+            const scale = Math.max(scaleX, scaleY);
+            bg.setScale(scale);
+            
+            // Add subtle overlay for better text readability
+            const overlay = this.add.graphics();
+            overlay.fillStyle(0x000000, 0.25);
+            overlay.fillRect(0, 0, width, height);
+        } else {
+            // Fallback to gradient background
+            const bg = this.add.graphics();
+            bg.fillGradientStyle(0x0D4E12, 0x1B5E20, 0x2E7D32, 0x1B5E20);
+            bg.fillRect(0, 0, width, height);
+            
+            // Subtle overlay
+            const overlay = this.add.graphics();
+            overlay.fillStyle(0x000000, 0.05);
+            overlay.fillRect(0, 0, width, height);
+        }
         
         // Floating particles for ambiance
         this.createFloatingParticles();
-        
-        // Subtle overlay
-        const overlay = this.add.graphics();
-        overlay.fillStyle(0x000000, 0.05);
-        overlay.fillRect(0, 0, width, height);
     }
 
     createFloatingParticles() {

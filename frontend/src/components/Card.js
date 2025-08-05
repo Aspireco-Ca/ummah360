@@ -18,22 +18,45 @@ class Card extends Phaser.GameObjects.Container {
     }
 
     createCard() {
-        // Card background
-        this.cardBack = this.scene.add.image(0, 0, 'card-back');
-        this.cardFront = this.scene.add.image(0, 0, 'card-front');
+        // Determine which card template to use based on type
+        const templateKey = this.getCardTemplateKey();
+        
+        // Card background - use HD version if available, fallback to generated
+        this.cardBack = this.scene.add.image(0, 0, 
+            this.scene.textures.exists('card-back-hd') ? 'card-back-hd' : 'card-back'
+        );
+        
+        // Card front - use template if available, fallback to generic
+        this.cardFront = this.scene.add.image(0, 0, 
+            this.scene.textures.exists(templateKey) ? templateKey : 'card-front'
+        );
         
         // Initially show back
         this.cardFront.setVisible(false);
         
-        // Card type indicator (color border)
+        // Card type indicator (color border) - only show if using placeholder
         this.cardBorder = this.scene.add.graphics();
-        this.updateCardBorder();
+        if (!this.scene.textures.exists(templateKey)) {
+            this.updateCardBorder();
+        }
         
         // Card content (text and icons)
         this.createCardContent();
         
         // Add to container
         this.add([this.cardBack, this.cardFront, this.cardBorder]);
+    }
+
+    getCardTemplateKey() {
+        // Map card types to template keys
+        const templateMap = {
+            'blessing': 'card-template-blessing',
+            'challenge': 'card-template-challenge',
+            'knowledge': 'card-template-knowledge',
+            'wisdom': 'card-template-wisdom'
+        };
+        
+        return templateMap[this.cardType] || 'card-front';
     }
 
     createCardContent() {

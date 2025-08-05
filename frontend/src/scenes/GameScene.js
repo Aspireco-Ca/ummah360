@@ -59,17 +59,41 @@ class GameScene extends Phaser.Scene {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
         
-        // Game table background
-        const gradient = this.add.graphics();
-        gradient.fillGradientStyle(0x0D4715, 0x0D4715, 0x1B5E20, 0x1B5E20);
-        gradient.fillRect(0, 0, width, height);
-        
-        // Table felt texture
-        const tableTexture = this.add.graphics();
-        tableTexture.fillStyle(0x1B5E20, 0.8);
-        tableTexture.fillRoundedRect(50, 100, width - 100, height - 200, 30);
-        tableTexture.lineStyle(4, 0xFFD700, 0.8);
-        tableTexture.strokeRoundedRect(50, 100, width - 100, height - 200, 30);
+        // Check if HD background is available
+        if (this.textures.exists('bg-game')) {
+            // Use the high-quality background image
+            const bg = this.add.image(width/2, height/2, 'bg-game');
+            
+            // Scale to cover the entire screen while maintaining aspect ratio
+            const scaleX = width / bg.width;
+            const scaleY = height / bg.height;
+            const scale = Math.max(scaleX, scaleY);
+            bg.setScale(scale);
+            
+            // Add subtle overlay for game table effect
+            const overlay = this.add.graphics();
+            overlay.fillStyle(0x000000, 0.2);
+            overlay.fillRect(0, 0, width, height);
+            
+            // Table felt texture on top
+            const tableTexture = this.add.graphics();
+            tableTexture.fillStyle(0x1B5E20, 0.6);
+            tableTexture.fillRoundedRect(50, 100, width - 100, height - 200, 30);
+            tableTexture.lineStyle(4, 0xFFD700, 0.8);
+            tableTexture.strokeRoundedRect(50, 100, width - 100, height - 200, 30);
+        } else {
+            // Fallback to gradient background
+            const gradient = this.add.graphics();
+            gradient.fillGradientStyle(0x0D4715, 0x0D4715, 0x1B5E20, 0x1B5E20);
+            gradient.fillRect(0, 0, width, height);
+            
+            // Table felt texture
+            const tableTexture = this.add.graphics();
+            tableTexture.fillStyle(0x1B5E20, 0.8);
+            tableTexture.fillRoundedRect(50, 100, width - 100, height - 200, 30);
+            tableTexture.lineStyle(4, 0xFFD700, 0.8);
+            tableTexture.strokeRoundedRect(50, 100, width - 100, height - 200, 30);
+        }
     }
 
     createGameUI() {

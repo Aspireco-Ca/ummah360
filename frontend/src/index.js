@@ -10,6 +10,7 @@ import BootScene from './scenes/BootScene';
 import MenuScene from './scenes/MenuScene';
 import GameScene from './scenes/GameScene';
 import LobbyScene from './scenes/LobbyScene';
+import VictoryScene from './scenes/VictoryScene';
 
 console.log('✅ All scenes imported');
 
@@ -57,7 +58,8 @@ class IslamicQuizGame {
                 BootScene,
                 MenuScene,
                 LobbyScene,
-                GameScene
+                GameScene,
+                VictoryScene
             ],
             input: {
                 activePointers: 1,
