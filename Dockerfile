@@ -18,11 +18,11 @@ COPY package*.json ./
 COPY mobile/package*.json ./mobile/
 
 # Install ALL dependencies (including dev) for build step
-RUN npm ci
+RUN npm install
 
 # Install mobile dependencies
 WORKDIR /app/mobile
-RUN npm ci
+RUN npm install
 
 # Go back to app directory
 WORKDIR /app
