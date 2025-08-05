@@ -120,8 +120,9 @@ class IslamicQuizServer {
             res.sendFile(simplePath);
         });
 
-        // Root route - serve simple version temporarily
+        // Root route - serve simple version temporarily (v2.0)
         this.app.get('/', (req, res) => {
+            console.log('Serving simple version');
             const simplePath = path.join(__dirname, '../frontend/src/simple.html');
             res.sendFile(simplePath);
         });
