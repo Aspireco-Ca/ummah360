@@ -11,7 +11,7 @@ class NetworkManager {
         
         // Server configuration
         this.serverUrl = process.env.NODE_ENV === 'production' 
-            ? 'wss://your-production-server.com' 
+            ? window.location.origin  // Use the same origin as the page
             : 'ws://localhost:4000';
     }
 

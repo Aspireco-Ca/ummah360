@@ -95,10 +95,10 @@ class IslamicQuizGame {
 
 // Initialize the game when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    // Remove loading screen
-    const loadingElement = document.querySelector('.loading');
-    if (loadingElement) {
-        loadingElement.style.display = 'none';
+    // Clear the game container and remove loading screen
+    const gameContainer = document.getElementById('game-container');
+    if (gameContainer) {
+        gameContainer.innerHTML = ''; // Clear loading content
     }
     
     // Start the game
