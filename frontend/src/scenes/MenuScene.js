@@ -13,32 +13,77 @@ class MenuScene extends Phaser.Scene {
     }
 
     create() {
-        this.networkManager = this.game.networkManager;
-        
+        try {
+            console.log('🎮 MenuScene create called!');
+            this.networkManager = this.game.networkManager;
+            
+            const width = this.cameras.main.width;
+            const height = this.cameras.main.height;
+            console.log(`Screen size: ${width}x${height}`);
+            
+            // Create beautiful Islamic-themed background
+            console.log('Creating background...');
+            this.createIslamicBackground();
+            
+            // Create floating animations
+            console.log('Creating floating elements...');
+            this.createFloatingElements();
+            
+            // Create title with proper Islamic design
+            console.log('Creating title...');
+            this.createIslamicTitle();
+            
+            // Create name input
+            console.log('Creating name input...');
+            this.createNameInput();
+            
+            // Create menu buttons
+            console.log('Creating menu buttons...');
+            this.createMenuButtons();
+            
+            // Create footer
+            console.log('Creating footer...');
+            this.createFooter();
+            
+            // Setup interactions
+            console.log('Setting up interactions...');
+            this.setupInputHandlers();
+            this.setupNetworkConnection();
+            
+            console.log('✅ MenuScene created successfully!');
+        } catch (error) {
+            console.error('❌ Error creating MenuScene:', error);
+            // Create minimal fallback menu
+            this.createFallbackMenu();
+        }
+    }
+
+    createFallbackMenu() {
+        console.log('🚨 Creating fallback menu...');
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
         
-        // Create beautiful Islamic-themed background
-        this.createIslamicBackground();
+        // Simple background
+        this.add.rectangle(width/2, height/2, width, height, 0x1B5E20);
         
-        // Create floating animations
-        this.createFloatingElements();
+        // Simple title
+        this.add.text(width/2, height/2 - 100, 'Islamic Quiz Card Game', {
+            fontSize: '32px',
+            fill: '#FFFFFF'
+        }).setOrigin(0.5);
         
-        // Create title with proper Islamic design
-        this.createIslamicTitle();
+        // Simple button
+        const button = this.add.rectangle(width/2, height/2 + 50, 200, 60, 0x4CAF50);
+        const buttonText = this.add.text(width/2, height/2 + 50, 'Start Practice', {
+            fontSize: '18px',
+            fill: '#FFFFFF'
+        }).setOrigin(0.5);
         
-        // Create name input
-        this.createNameInput();
-        
-        // Create menu buttons
-        this.createMenuButtons();
-        
-        // Create footer
-        this.createFooter();
-        
-        // Setup interactions
-        this.setupInputHandlers();
-        this.setupNetworkConnection();
+        button.setInteractive();
+        button.on('pointerdown', () => {
+            console.log('Practice button clicked');
+            this.scene.start('GameScene', { mode: 'practice', playerName: 'Player' });
+        });
     }
 
     createIslamicBackground() {

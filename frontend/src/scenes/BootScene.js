@@ -264,11 +264,9 @@ class BootScene extends Phaser.Scene {
             }
         }
         
-        // DEBUG: Force transition after 3 seconds for testing (temporary)
-        this.time.delayedCall(3000, () => {
-            console.warn('🚨 DEBUG: Force transitioning to MenuScene after 3 seconds');
-            this.scene.start('MenuScene');
-        });
+        // IMMEDIATE transition for testing
+        console.warn('🚨 IMMEDIATE: Transitioning to MenuScene NOW');
+        this.scene.start('MenuScene');
     }
 }
 
