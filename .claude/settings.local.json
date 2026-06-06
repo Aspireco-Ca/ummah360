@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cmd //c \"dir C:\\\\Users\\\\DSH\\\\AppData\\\\Local\\\\AnthropicClaude\\\\app-1.1.4088 /b /a\")",
+      "Bash(cmd //c \"dir C:\\\\Users\\\\DSH\\\\AppData\\\\Roaming\\\\Claude\\\\Squirrel-Install.log\")",
+      "Bash(cmd //c \"dir C:\\\\Users\\\\DSH\\\\AppData\\\\Local\\\\AnthropicClaude /b\")",
+      "Bash(cmd //c \"dir C:\\\\Users\\\\DSH\\\\AppData\\\\Local\\\\AnthropicClaude\\\\app-1.1.4088\")",
+      "Bash(cmd //c \"for /d %d in \\(C:\\\\Users\\\\DSH\\\\AppData\\\\Local\\\\AnthropicClaude\\\\app-*\\) do @\\(echo === %d === & dir /b /a %d 2>nul | findstr /v \\\\\"^$\\\\\" || echo \\(empty\\)\\)\")",
+      "Bash(cmd //c \"where /r C:\\\\Users\\\\DSH\\\\Downloads Squirrel-Install.log 2>nul\")",
+      "Bash(cmd //c \"dir C:\\\\Users\\\\DSH\\\\AppData\\\\Roaming\\\\Claude\\\\Singleton* /a 2>nul & dir C:\\\\Users\\\\DSH\\\\AppData\\\\Roaming\\\\Claude\\\\Lockfile /a 2>nul & dir C:\\\\Users\\\\DSH\\\\AppData\\\\Roaming\\\\Claude\\\\*lock* /a 2>nul\")",
+      "Bash(cmd //c \"dir C:\\\\Users\\\\DSH\\\\AppData\\\\Roaming\\\\Claude\\\\Crashpad /s /b 2>nul\")"
+    ]
+  }
+}
