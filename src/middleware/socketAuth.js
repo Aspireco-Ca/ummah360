@@ -49,11 +49,11 @@ function socketAuth(socket, next) {
         
         // Validate origin in production
         if (process.env.NODE_ENV === 'production') {
-            const allowedOrigins = [
-                'https://your-domain.com',
-                'https://www.your-domain.com'
-            ];
-            
+            const originEnv = process.env.ALLOWED_ORIGINS || process.env.CORS_ORIGIN;
+            const allowedOrigins = originEnv
+                ? originEnv.split(',').map(s => s.trim()).filter(Boolean)
+                : ['https://your-domain.com', 'https://www.your-domain.com'];
+
             const origin = headers.origin;
             if (origin && !allowedOrigins.includes(origin)) {
                 console.warn(`Connection from unauthorized origin: ${origin} (IP: ${clientIP})`);

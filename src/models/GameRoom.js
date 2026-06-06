@@ -1,4 +1,5 @@
-const IslamicQuestion = require('../../frontend/src/components/IslamicQuestion');
+// Decoupled from frontend question model. Questions are now provided
+// by the backend IslamicContentManager via generateQuestions(contentManager).
 
 class GameRoom {
     constructor(id, gameMode, io) {
@@ -181,33 +182,38 @@ class GameRoom {
 
     generateQuestions(contentManager) {
         const { questionCount, categories, difficulty } = this.gameSettings;
-        
-        // For now, use the frontend question system
-        // In production, this would query a proper database
-        let allQuestions = [];
-        
-        if (categories.includes('all') || categories.length === 0) {
-            allQuestions = [
-                ...IslamicQuestion.getQuranQuestions(),
-                ...IslamicQuestion.getHadithQuestions(),
-                ...IslamicQuestion.getFiqhQuestions(),
-                ...IslamicQuestion.getHistoryQuestions(),
-                ...IslamicQuestion.getAqidahQuestions()
-            ];
-        } else {
-            categories.forEach(category => {
-                allQuestions = allQuestions.concat(
-                    IslamicQuestion.getQuestionsByCategory(category, questionCount)
-                );
-            });
-        }
-        
-        // Shuffle and select questions
-        this.questions = this.shuffleArray(allQuestions).slice(0, questionCount);
-        
-        // Ensure we have enough questions
-        if (this.questions.length < questionCount) {
-            console.warn(`Not enough questions available. Requested: ${questionCount}, Available: ${this.questions.length}`);
+
+        try {
+            let selected = [];
+
+            if (!contentManager) {
+                console.warn('Content manager not provided to generateQuestions');
+                this.questions = [];
+                return;
+            }
+
+            if (categories.includes('all') || categories.length === 0) {
+                // Mixed selection across all categories with optional difficulty
+                selected = contentManager.getMixedQuestions(questionCount, ['all'], difficulty || 'mixed');
+            } else {
+                // Aggregate from specific categories
+                for (const cat of categories) {
+                    const remaining = Math.max(questionCount - selected.length, 0);
+                    if (remaining === 0) break;
+                    const chunk = contentManager.getQuestionsByCategory(cat, remaining, difficulty || 'mixed');
+                    selected = selected.concat(chunk);
+                }
+            }
+
+            // Shuffle and slice to requested size
+            this.questions = this.shuffleArray(selected).slice(0, questionCount);
+
+            if (this.questions.length < questionCount) {
+                console.warn(`Not enough questions available. Requested: ${questionCount}, Available: ${this.questions.length}`);
+            }
+        } catch (err) {
+            console.error('Failed to generate questions from content manager:', err);
+            this.questions = [];
         }
     }
 
@@ -273,7 +279,7 @@ class GameRoom {
         }
         
         const isCorrect = selectedAnswer === currentQuestion.correctAnswer;
-        const points = isCorrect ? currentQuestion.calculateScore(timeTaken, true) : 0;
+        const points = this.calculateScore(currentQuestion, timeTaken, isCorrect, 1);
         
         // Store answer
         this.roundAnswers.set(playerId, {
@@ -307,6 +313,23 @@ class GameRoom {
         
         this.updateActivity();
         return result;
+    }
+
+    // Local scoring logic (decoupled from frontend model)
+    calculateScore(question, timeTaken, isCorrect, bonusMultiplier = 1) {
+        if (!isCorrect) return 0;
+
+        const basePoints = typeof question.points === 'number' ? question.points : 50;
+        const difficulty = typeof question.difficulty === 'number' ? question.difficulty : 1; // 1..5
+        const timeLimit = typeof question.timeLimit === 'number' ? question.timeLimit : 30;
+
+        let score = basePoints;
+        // Difficulty bonus
+        score += (difficulty - 1) * 20;
+        // Time bonus
+        const timeBonus = Math.max(0, (timeLimit - (timeTaken || 0)) * 2);
+        const total = Math.round((score + timeBonus) * (bonusMultiplier || 1));
+        return Math.max(total, 10);
     }
 
     nextQuestion() {

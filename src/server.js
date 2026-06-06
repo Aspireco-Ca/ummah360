@@ -18,16 +18,28 @@ class IslamicQuizServer {
     constructor() {
         this.app = express();
         this.server = http.createServer(this.app);
+        const getAllowedOrigins = () => {
+            const raw = process.env.ALLOWED_ORIGINS || process.env.CORS_ORIGIN;
+            if (raw) return raw.split(',').map(s => s.trim()).filter(Boolean);
+            return process.env.NODE_ENV === 'production'
+                ? ['https://your-domain.com']
+                : ['http://localhost:8080', 'http://127.0.0.1:8080'];
+        };
+
+        const allowedOrigins = getAllowedOrigins();
+        this.allowedOrigins = allowedOrigins;
+
         this.io = socketIo(this.server, {
             cors: {
-                origin: process.env.NODE_ENV === 'production' 
-                    ? ['https://your-domain.com'] 
-                    : ['http://localhost:8080', 'http://127.0.0.1:8080'],
+                origin: this.allowedOrigins,
                 methods: ['GET', 'POST'],
                 credentials: true
             },
             transports: ['websocket', 'polling']
         });
+
+        // Apply socket authentication middleware
+        this.io.use(socketAuth);
 
         // Initialize managers
         this.gameRoomManager = new GameRoomManager(this.io);
@@ -57,9 +69,7 @@ class IslamicQuizServer {
 
         // CORS
         this.app.use(cors({
-            origin: process.env.NODE_ENV === 'production' 
-                ? ['https://your-domain.com'] 
-                : ['http://localhost:8080', 'http://127.0.0.1:8080'],
+            origin: this.allowedOrigins,
             credentials: true
         }));
 
@@ -268,8 +278,7 @@ class IslamicQuizServer {
     }
 
     setupSocketHandlers() {
-        // Socket authentication middleware
-        this.io.use(socketAuth);
+        // Socket authentication middleware applied during initialization
 
         this.io.on('connection', (socket) => {
             console.log(`Player connected: ${socket.id}`);
