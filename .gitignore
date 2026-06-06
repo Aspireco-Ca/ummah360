@@ -209,3 +209,8 @@ build/
 out/
 .expo/
 .turbo/
+release/
+nul
+con
+prn
+aux
