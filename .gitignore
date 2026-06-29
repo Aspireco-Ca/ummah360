@@ -160,6 +160,7 @@ mobile/platforms/android/CordovaLib/build/
 
 # Local development
 .local/
+.worktrees/
 
 # Database files
 *.db
