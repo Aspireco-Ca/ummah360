@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors, radii, shadows, spacing } from '@/app/theme';
+import { colors, radii, shadows, spacing } from '@/theme/theme';
 import { AudioButton } from '@/components/AudioButton';
 import { GameCard } from '@/components/GameCard';
 import { Screen } from '@/components/Screen';

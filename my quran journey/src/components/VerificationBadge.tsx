@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { colors, radii, spacing } from '@/app/theme';
+import { colors, radii, spacing } from '@/theme/theme';
 import { getVerificationLabel } from '@/services/contentVerificationService';
 import type { ContentVerification } from '@/types/surah';
 

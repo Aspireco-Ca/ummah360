@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
-import { colors, radii, shadows, spacing } from '@/app/theme';
+import { colors, radii, shadows, spacing } from '@/theme/theme';
 import { Screen } from '@/components/Screen';
 import { VerificationBadge } from '@/components/VerificationBadge';
 import { placeholderSurahs } from '@/data/surahs.placeholder';

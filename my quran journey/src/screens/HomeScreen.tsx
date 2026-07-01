@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { colors, radii, shadows, spacing } from '@/app/theme';
+import { colors, radii, shadows, spacing } from '@/theme/theme';
 import { BigButton } from '@/components/BigButton';
 import { Screen } from '@/components/Screen';
 import { translate } from '@/i18n';

@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors, radii, shadows, spacing } from '@/app/theme';
+import { colors, radii, shadows, spacing } from '@/theme/theme';
 
 interface BigButtonProps {
   title: string;

@@ -19,10 +19,10 @@
     "typescript": "~6.0.3"
   },
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
+    "start": "node ./node_modules/expo/bin/cli start",
+    "android": "node ./node_modules/expo/bin/cli start --android",
+    "ios": "node ./node_modules/expo/bin/cli start --ios",
+    "web": "node ./node_modules/expo/bin/cli start --web",
     "typecheck": "node ./node_modules/typescript/bin/tsc --noEmit",
     "test": "node ./node_modules/tsx/dist/cli.mjs src/tests/runTests.ts"
   },

@@ -1,6 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { colors } from '@/app/theme';
+import { colors } from '@/theme/theme';
 import { GamesScreen } from '@/screens/GamesScreen';
 import { HomeScreen } from '@/screens/HomeScreen';
 import { LetterLessonScreen } from '@/screens/LetterLessonScreen';

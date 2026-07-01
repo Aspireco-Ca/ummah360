@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { colors, spacing } from '@/app/theme';
+import { colors, spacing } from '@/theme/theme';
 
 export const ProgressStars = ({ count }: { count: number }) => {
   const shown = Math.min(count, 5);

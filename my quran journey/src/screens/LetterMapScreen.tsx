@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { colors, spacing } from '@/app/theme';
+import { colors, spacing } from '@/theme/theme';
 import { ArabicLetterCard } from '@/components/ArabicLetterCard';
 import { Screen } from '@/components/Screen';
 import { arabicLetters } from '@/data/arabicLetters';

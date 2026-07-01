@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { PanResponder, StyleSheet, Text, View } from 'react-native';
-import { colors, radii, spacing } from '@/app/theme';
+import { colors, radii, spacing } from '@/theme/theme';
 
 interface Point {
   x: number;

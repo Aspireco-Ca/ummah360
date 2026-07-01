@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, spacing } from '@/app/theme';
+import { colors, spacing } from '@/theme/theme';
 
 export const Screen = ({ children }: { children: ReactNode }) => (
   <SafeAreaView style={styles.safeArea}>
