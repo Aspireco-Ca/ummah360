@@ -22,9 +22,10 @@ TODO before production:
 
 ```bash
 npm install
+npm run deps:externalize
 ```
 
-If Windows file scanning slows React Native installation, rerun the same command. The app is configured for Expo SDK 57.
+The dependency externalization step moves `node_modules` to the parent `D:\ummah360\node_modules` folder. This avoids Expo Metro's Windows fallback watcher recursing through thousands of dependency folders under `my quran journey`.
 
 ## Run
 
@@ -33,6 +34,12 @@ npm start
 ```
 
 Then open with Expo Go, Android emulator, iOS simulator, or Expo web tooling.
+
+Current local dev URL:
+
+```text
+http://localhost:8082
+```
 
 ## Test And Typecheck
 
