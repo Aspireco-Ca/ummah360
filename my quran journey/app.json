@@ -1,11 +1,12 @@
 {
   "expo": {
-    "name": "quran-garden-temp",
-    "slug": "quran-garden-temp",
+    "name": "Quran Garden",
+    "slug": "quran-garden",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "scheme": "quran-garden",
     "ios": {
       "supportsTablet": true
     },
