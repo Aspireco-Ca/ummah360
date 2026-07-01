@@ -7,8 +7,33 @@
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <main class="game-shell">
+  <main class="game-shell is-menu" id="gameShell">
     <canvas id="game" aria-label="Headshots arcade soccer game"></canvas>
+
+    <section class="main-menu" id="mainMenu" aria-label="Main menu">
+      <div class="menu-panel">
+        <p class="menu-kicker">Arcade football duel</p>
+        <h1>Headshots</h1>
+        <p class="menu-copy">Big heads, fast volleys, loud goals. First whistle starts the match.</p>
+
+        <div class="menu-roster" aria-hidden="true">
+          <div class="menu-card menu-card--home">
+            <span class="menu-card__head"></span>
+            <strong>Home Hero</strong>
+          </div>
+          <div class="menu-vs">VS</div>
+          <div class="menu-card menu-card--away">
+            <span class="menu-card__head"></span>
+            <strong>Street CPU</strong>
+          </div>
+        </div>
+
+        <div class="menu-actions">
+          <button class="primary-button" id="startButton" type="button">Start Match</button>
+          <button class="sound-button" id="soundButton" type="button" aria-pressed="true">Sound On</button>
+        </div>
+      </div>
+    </section>
 
     <section class="hud" aria-hidden="true">
       <div class="player-tag player-tag--home">HOME</div>
@@ -27,8 +52,8 @@
 
     <section class="touch-controls" aria-label="Touch controls">
       <div class="touch-cluster">
-        <button class="touch-button" data-control="left" aria-label="Move left">‹</button>
-        <button class="touch-button" data-control="right" aria-label="Move right">›</button>
+        <button class="touch-button" data-control="left" aria-label="Move left">&lt;</button>
+        <button class="touch-button" data-control="right" aria-label="Move right">&gt;</button>
       </div>
       <div class="touch-cluster">
         <button class="touch-button touch-button--jump" data-control="jump" aria-label="Jump">JUMP</button>

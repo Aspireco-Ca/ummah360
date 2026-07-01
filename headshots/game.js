@@ -6,6 +6,9 @@
   const clockEl = document.getElementById('clock');
   const messageEl = document.getElementById('message');
   const restartButton = document.getElementById('restartButton');
+  const gameShell = document.getElementById('gameShell');
+  const startButton = document.getElementById('startButton');
+  const soundButton = document.getElementById('soundButton');
 
   const keys = new Set();
   const pressed = {
@@ -27,7 +30,8 @@
     matchSeconds: 90,
     clock: 90,
     score: { home: 0, away: 0 },
-    running: true,
+    mode: 'menu',
+    running: false,
     pausedForGoal: 0,
     particles: [],
     cameraShake: 0,
@@ -57,6 +61,13 @@
     vy: 0,
     radius: 20,
     spin: 0
+  };
+
+  const audio = {
+    context: null,
+    enabled: true,
+    menuTimer: null,
+    lastTap: 0
   };
 
   function createPlayer(config) {
@@ -132,13 +143,32 @@
     state.score.home = 0;
     state.score.away = 0;
     state.clock = state.matchSeconds;
+    state.mode = 'playing';
     state.running = true;
     state.pausedForGoal = 0;
     state.particles = [];
     state.cameraShake = 0;
     placeActors();
+    gameShell.classList.remove('is-menu');
     showMessage('Headshots', 'Score more before the clock runs out.', 1600);
     syncHud();
+  }
+
+  function showMainMenu() {
+    state.mode = 'menu';
+    state.running = false;
+    state.clock = state.matchSeconds;
+    gameShell.classList.add('is-menu');
+    showMessage('Headshots', 'Score more before the clock runs out.', 0);
+    syncHud();
+    startMenuLoop();
+  }
+
+  function startMatch() {
+    unlockAudio();
+    stopMenuLoop();
+    playSound('start');
+    resetMatch();
   }
 
   function syncHud() {
@@ -159,11 +189,127 @@
     }
   }
 
+  function unlockAudio() {
+    if (!audio.enabled) {
+      return;
+    }
+
+    if (!audio.context) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) {
+        audio.enabled = false;
+        soundButton.textContent = 'No Sound';
+        soundButton.setAttribute('aria-pressed', 'false');
+        return;
+      }
+      audio.context = new AudioContext();
+    }
+
+    if (audio.context.state === 'suspended') {
+      audio.context.resume();
+    }
+  }
+
+  function playTone(frequency, duration, type = 'square', gain = 0.07, delay = 0) {
+    if (!audio.enabled || !audio.context) {
+      return;
+    }
+
+    const now = audio.context.currentTime + delay;
+    const oscillator = audio.context.createOscillator();
+    const volume = audio.context.createGain();
+    oscillator.type = type;
+    oscillator.frequency.setValueAtTime(frequency, now);
+    volume.gain.setValueAtTime(0, now);
+    volume.gain.linearRampToValueAtTime(gain, now + 0.012);
+    volume.gain.exponentialRampToValueAtTime(0.001, now + duration);
+    oscillator.connect(volume);
+    volume.connect(audio.context.destination);
+    oscillator.start(now);
+    oscillator.stop(now + duration + 0.03);
+  }
+
+  function playNoise(duration = 0.18, gain = 0.08) {
+    if (!audio.enabled || !audio.context) {
+      return;
+    }
+
+    const length = Math.floor(audio.context.sampleRate * duration);
+    const buffer = audio.context.createBuffer(1, length, audio.context.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < length; i += 1) {
+      data[i] = (Math.random() * 2 - 1) * (1 - i / length);
+    }
+    const source = audio.context.createBufferSource();
+    const volume = audio.context.createGain();
+    source.buffer = buffer;
+    volume.gain.value = gain;
+    source.connect(volume);
+    volume.connect(audio.context.destination);
+    source.start();
+  }
+
+  function playSound(name) {
+    if (!audio.enabled) {
+      return;
+    }
+
+    unlockAudio();
+    if (!audio.context) {
+      return;
+    }
+
+    if (name === 'menu') {
+      playTone(392, 0.07, 'triangle', 0.035);
+      playTone(587, 0.08, 'triangle', 0.03, 0.09);
+    } else if (name === 'start') {
+      playTone(294, 0.08, 'square', 0.055);
+      playTone(440, 0.08, 'square', 0.055, 0.09);
+      playTone(880, 0.18, 'triangle', 0.07, 0.18);
+    } else if (name === 'jump') {
+      playTone(520, 0.08, 'sine', 0.04);
+      playTone(780, 0.1, 'sine', 0.035, 0.05);
+    } else if (name === 'kick') {
+      playNoise(0.08, 0.07);
+      playTone(130, 0.09, 'sawtooth', 0.08);
+    } else if (name === 'goal') {
+      playNoise(0.28, 0.12);
+      playTone(523, 0.1, 'square', 0.06);
+      playTone(659, 0.1, 'square', 0.06, 0.1);
+      playTone(784, 0.24, 'square', 0.07, 0.2);
+    } else if (name === 'tap') {
+      const now = performance.now();
+      if (now - audio.lastTap > 80) {
+        audio.lastTap = now;
+        playTone(720, 0.045, 'triangle', 0.025);
+      }
+    }
+  }
+
+  function startMenuLoop() {
+    if (!audio.enabled || audio.menuTimer) {
+      return;
+    }
+
+    audio.menuTimer = window.setInterval(() => {
+      if (state.mode === 'menu') {
+        playSound('menu');
+      }
+    }, 1050);
+  }
+
+  function stopMenuLoop() {
+    if (audio.menuTimer) {
+      window.clearInterval(audio.menuTimer);
+      audio.menuTimer = null;
+    }
+  }
+
   function update(time) {
     const dt = Math.min((time - state.lastTime) / 1000, 0.033);
     state.lastTime = time;
 
-    if (state.running) {
+    if (state.mode === 'playing' && state.running) {
       if (state.pausedForGoal > 0) {
         state.pausedForGoal -= dt;
         if (state.pausedForGoal <= 0) {
@@ -243,6 +389,9 @@
       player.onGround = false;
       player.jumpGrace = 0;
       burst(player.x, player.y - 8, '#ffffff', 8);
+      if (player.side === 'home') {
+        playSound('jump');
+      }
     }
 
     player.vy += gravity * dt;
@@ -302,6 +451,7 @@
         ball.spin = direction * 0.55;
         state.cameraShake = 10;
         burst(ball.x, ball.y, player.side === 'home' ? '#4cc9f0' : '#ff4d8d', 18);
+        playSound('kick');
       }
     }
   }
@@ -362,6 +512,7 @@
     state.cameraShake = 18;
     syncHud();
     burst(ball.x, ball.y, side === 'home' ? '#4cc9f0' : '#ff4d8d', 42);
+    playSound('goal');
     showMessage('GOAL!', side === 'home' ? 'Home smashes it in.' : 'CPU answers back.', 1200);
     ball.vx = 0;
     ball.vy = 0;
@@ -684,6 +835,7 @@
     button.addEventListener('pointerdown', (event) => {
       event.preventDefault();
       button.setPointerCapture(event.pointerId);
+      playSound('tap');
       set(true);
     });
     button.addEventListener('pointerup', () => set(false));
@@ -691,9 +843,27 @@
     button.addEventListener('pointerleave', () => set(false));
   });
 
-  restartButton.addEventListener('click', resetMatch);
+  restartButton.addEventListener('click', () => {
+    playSound('start');
+    resetMatch();
+  });
+
+  startButton.addEventListener('click', startMatch);
+
+  soundButton.addEventListener('click', () => {
+    audio.enabled = !audio.enabled;
+    soundButton.textContent = audio.enabled ? 'Sound On' : 'Sound Off';
+    soundButton.setAttribute('aria-pressed', String(audio.enabled));
+    if (audio.enabled) {
+      unlockAudio();
+      playSound('menu');
+      startMenuLoop();
+    } else {
+      stopMenuLoop();
+    }
+  });
 
   resize();
-  resetMatch();
+  showMainMenu();
   requestAnimationFrame(update);
 })();
