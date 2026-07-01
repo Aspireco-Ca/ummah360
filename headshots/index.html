@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Headshots Arcade Soccer</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="game-shell">
+    <canvas id="game" aria-label="Headshots arcade soccer game"></canvas>
+
+    <section class="hud" aria-hidden="true">
+      <div class="player-tag player-tag--home">HOME</div>
+      <div class="scoreboard">
+        <span id="homeScore">0</span>
+        <span class="scoreboard__clock" id="clock">90</span>
+        <span id="awayScore">0</span>
+      </div>
+      <div class="player-tag player-tag--away">CPU</div>
+    </section>
+
+    <section class="message" id="message" aria-live="polite">
+      <strong>Headshots</strong>
+      <span>Score more before the clock runs out.</span>
+    </section>
+
+    <section class="touch-controls" aria-label="Touch controls">
+      <div class="touch-cluster">
+        <button class="touch-button" data-control="left" aria-label="Move left">‹</button>
+        <button class="touch-button" data-control="right" aria-label="Move right">›</button>
+      </div>
+      <div class="touch-cluster">
+        <button class="touch-button touch-button--jump" data-control="jump" aria-label="Jump">JUMP</button>
+        <button class="touch-button touch-button--kick" data-control="kick" aria-label="Kick">KICK</button>
+      </div>
+    </section>
+
+    <button class="restart-button" id="restartButton" type="button">Restart</button>
+  </main>
+
+  <script src="./game.js"></script>
+</body>
+</html>
