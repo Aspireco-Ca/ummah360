@@ -1,4 +1,7 @@
+import { existsSync, statSync } from 'node:fs';
+import path from 'node:path';
 import { arabicLetters } from '@/data/arabicLetters';
+import { practiceWords } from '@/data/practiceWords';
 import { placeholderSurahs } from '@/data/surahs.placeholder';
 import {
   canPublishQuranContent,
@@ -70,11 +73,30 @@ const testContentVerification = () => {
   assert(!canPublishQuranContent(placeholder), 'Placeholder Quran content should be blocked from production use.');
 };
 
+const testLearningAudioAssets = () => {
+  const audioKeys = [
+    ...arabicLetters.map((letter) => letter.audioKey),
+    ...practiceWords.map((word) => word.audioKey),
+    'ui/great-job',
+    'ui/try-again',
+    'ui/you-found-letter',
+    'ui/beautiful-effort',
+    'ui/keep-practicing',
+  ];
+
+  for (const audioKey of audioKeys) {
+    const filePath = path.join(process.cwd(), 'assets', 'audio', `${audioKey}.mp3`);
+    assert(existsSync(filePath), `Missing generated audio asset for ${audioKey}.`);
+    assert(statSync(filePath).size > 1024, `Generated audio asset for ${audioKey} should not be empty.`);
+  }
+};
+
 const run = async () => {
   testArabicLetters();
   await testProgressService();
   testGameLogic();
   testContentVerification();
+  testLearningAudioAssets();
   console.log('All Quran Garden tests passed.');
 };
 

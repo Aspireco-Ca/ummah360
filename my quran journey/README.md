@@ -112,18 +112,36 @@ Do not paste Quran text from search results, random websites, AI output, or unre
 
 ## Adding Audio
 
-The audio service is in `src/services/audioService.ts`. It currently logs placeholder keys.
+The audio service is in `src/services/audioService.ts`. Letter, practice-word, and gentle UI feedback audio are bundled locally under `assets/audio/` and mapped in `src/data/audioManifest.ts`.
 
-Expected future audio layout:
+Current audio layout:
 
 ```text
 assets/audio/
   letters/
   practice-words/
-  surahs/
+  ui/
 ```
 
-For Quran recitation, use local certified audio files and link them through `audioKey`. Do not hotlink random recitations.
+Learning audio can be regenerated with ElevenLabs for non-Quran content only:
+
+```bash
+ELEVENLABS_API_KEY=... npm run audio:generate
+```
+
+Optional overrides:
+
+```bash
+ELEVENLABS_VOICE_ID=... ELEVENLABS_MODEL_ID=... npm run audio:generate
+```
+
+The generator skips existing files and only creates:
+
+- Arabic letter learning clips.
+- Practice-word clips clearly labeled as not Quran text.
+- Friendly feedback clips such as "Great job" and "Try again."
+
+For Quran recitation, use local certified audio files and link them through `audioKey` only after source review. Do not generate Quran recitation with AI and do not hotlink random recitations.
 
 ## Adding New Games
 
@@ -140,7 +158,7 @@ Avoid:
 
 ## Known Limitations
 
-- Audio playback is an abstraction only.
+- Letter, practice-word, and UI feedback audio are generated learning aids, not certified teacher recitation.
 - Tracing records interaction but does not validate strokes.
 - Surah content is placeholder-only.
 - No speech scoring is included.
