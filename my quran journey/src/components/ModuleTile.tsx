@@ -34,7 +34,7 @@ export const ModuleTile = ({ title, subtitle, symbol, accent, meta, onPress }: M
 
 const styles = StyleSheet.create({
   tile: {
-    minHeight: 118,
+    minHeight: 102,
     width: '48%',
     minWidth: 154,
     flexGrow: 1,
@@ -50,15 +50,15 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.99 }],
   },
   symbolWrap: {
-    width: 42,
-    height: 42,
+    width: 38,
+    height: 38,
     borderRadius: radii.md,
     alignItems: 'center',
     justifyContent: 'center',
   },
   symbol: {
     color: colors.primaryDark,
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '900',
     textAlign: 'center',
     writingDirection: 'rtl',
@@ -69,8 +69,8 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.text,
-    fontSize: 16,
-    lineHeight: 20,
+    fontSize: 15,
+    lineHeight: 19,
     fontWeight: '900',
   },
   subtitle: {

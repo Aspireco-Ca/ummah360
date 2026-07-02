@@ -6,6 +6,7 @@ import { ProgressProvider } from '@/store/progressStore';
 
 type ScalableComponent = {
   defaultProps?: {
+    allowFontScaling?: boolean;
     maxFontSizeMultiplier?: number;
   };
 };
@@ -13,6 +14,7 @@ type ScalableComponent = {
 const capTextScaling = (component: ScalableComponent) => {
   component.defaultProps = {
     ...component.defaultProps,
+    allowFontScaling: false,
     maxFontSizeMultiplier: 1.12,
   };
 };

@@ -56,8 +56,8 @@ const styles = StyleSheet.create({
   panel: {
     borderRadius: radii.lg,
     borderWidth: 1,
-    padding: spacing.lg,
-    gap: spacing.md,
+    padding: spacing.md,
+    gap: spacing.sm,
     ...shadows.soft,
   },
   header: {

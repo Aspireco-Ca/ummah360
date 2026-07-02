@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     paddingTop: spacing.lg,
   },
   hero: {
-    minHeight: 224,
+    minHeight: 206,
     borderRadius: radii.xl,
     backgroundColor: colors.inkPanel,
     padding: spacing.lg,
@@ -150,17 +150,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   brandMark: {
-    width: 54,
-    height: 54,
-    borderRadius: 18,
+    width: 48,
+    height: 48,
+    borderRadius: 16,
     backgroundColor: colors.surfaceSoft,
     alignItems: 'center',
     justifyContent: 'center',
   },
   brandLetter: {
     color: colors.primaryDark,
-    fontSize: 31,
-    lineHeight: 40,
+    fontSize: 28,
+    lineHeight: 36,
     fontWeight: '900',
     writingDirection: 'rtl',
   },
@@ -184,8 +184,8 @@ const styles = StyleSheet.create({
   },
   appName: {
     color: colors.white,
-    fontSize: 34,
-    lineHeight: 39,
+    fontSize: 30,
+    lineHeight: 36,
     fontWeight: '900',
   },
   tagline: {
@@ -204,14 +204,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   pathLine: {
-    width: 16,
+    width: 14,
     height: 2,
     backgroundColor: 'rgba(255,255,255,0.22)',
   },
   pathStep: {
-    width: 42,
-    height: 42,
-    borderRadius: 16,
+    width: 38,
+    height: 38,
+    borderRadius: 14,
     backgroundColor: 'rgba(255,255,255,0.12)',
     alignItems: 'center',
     justifyContent: 'center',
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   },
   pathLetter: {
     color: colors.white,
-    fontSize: 23,
+    fontSize: 21,
     fontWeight: '900',
     writingDirection: 'rtl',
   },
@@ -239,8 +239,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   todayLetterTile: {
-    width: 82,
-    height: 86,
+    width: 76,
+    height: 80,
     borderRadius: radii.lg,
     backgroundColor: colors.surfaceCool,
     borderWidth: 1,
@@ -250,8 +250,8 @@ const styles = StyleSheet.create({
   },
   todayLetter: {
     color: colors.primaryDark,
-    fontSize: 60,
-    lineHeight: 74,
+    fontSize: 54,
+    lineHeight: 68,
     fontWeight: '900',
     writingDirection: 'rtl',
   },
@@ -261,8 +261,8 @@ const styles = StyleSheet.create({
   },
   todayTitle: {
     color: colors.text,
-    fontSize: 22,
-    lineHeight: 27,
+    fontSize: 20,
+    lineHeight: 25,
     fontWeight: '900',
   },
   todaySubtitle: {
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
     writingDirection: 'rtl',
   },
   primaryAction: {
-    minHeight: 48,
+    minHeight: 44,
     alignSelf: 'flex-start',
     borderRadius: radii.pill,
     backgroundColor: colors.primary,

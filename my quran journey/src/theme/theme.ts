@@ -60,22 +60,22 @@ export const shadows = {
 
 export const typography = {
   title: {
-    fontSize: 30,
-    lineHeight: 36,
+    fontSize: 26,
+    lineHeight: 32,
     fontWeight: '900' as const,
   },
   sectionTitle: {
-    fontSize: 19,
-    lineHeight: 24,
+    fontSize: 17,
+    lineHeight: 22,
     fontWeight: '900' as const,
   },
   body: {
-    fontSize: 16,
-    lineHeight: 23,
+    fontSize: 14,
+    lineHeight: 21,
   },
   caption: {
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: 12,
+    lineHeight: 17,
     fontWeight: '700' as const,
   },
 };
