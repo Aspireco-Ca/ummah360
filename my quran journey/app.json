@@ -26,6 +26,9 @@
     },
     "experiments": {
       "tsconfigPaths": true
-    }
+    },
+    "plugins": [
+      "expo-audio"
+    ]
   }
 }
