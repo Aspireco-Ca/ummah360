@@ -36,6 +36,11 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+# local QA artifacts
+/window-*.xml
+/highend-*.txt
+/quran-garden-*.png
+
 # generated native folders
 /ios
 /android
