@@ -10,7 +10,7 @@ export interface StorageAdapter {
 }
 
 const defaultSettings: ProgressSettings = {
-  language: 'bilingual',
+  language: 'en',
   audioEnabled: true,
   transliterationEnabled: true,
   reduceSoundEffects: false,

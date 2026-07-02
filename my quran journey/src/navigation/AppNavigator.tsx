@@ -21,11 +21,12 @@ export const AppNavigator = () => (
       screenOptions={{
         headerStyle: { backgroundColor: colors.background },
         headerTintColor: colors.primaryDark,
-        headerTitleStyle: { fontWeight: '800' },
+        headerTitleStyle: { fontWeight: '900', fontSize: 18 },
+        headerShadowVisible: false,
         contentStyle: { backgroundColor: colors.background },
       }}
     >
-      <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Quran Garden' }} />
+      <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
       <Stack.Screen name="LetterMap" component={LetterMapScreen} options={{ title: 'Garden of Letters' }} />
       <Stack.Screen name="LetterLesson" component={LetterLessonScreen} options={{ title: 'Letter Lesson' }} />
       <Stack.Screen name="QuranWords" component={QuranWordsScreen} options={{ title: 'Practice Words' }} />

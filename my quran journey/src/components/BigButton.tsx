@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors, radii, shadows, spacing } from '@/theme/theme';
+import { colors, radii, spacing, typography } from '@/theme/theme';
 
 interface BigButtonProps {
   title: string;
@@ -41,32 +41,34 @@ export const BigButton = ({ title, subtitle, symbol, tone = 'green', onPress }: 
 
 const styles = StyleSheet.create({
   button: {
-    minHeight: 88,
+    minHeight: 72,
     borderRadius: radii.lg,
-    padding: spacing.lg,
+    padding: spacing.md,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
-    ...shadows.soft,
   },
   symbol: {
-    minWidth: 42,
-    fontSize: 34,
+    width: 42,
+    height: 42,
+    fontSize: 27,
     fontWeight: '800',
     textAlign: 'center',
+    textAlignVertical: 'center',
+    borderRadius: radii.md,
+    backgroundColor: 'rgba(255,255,255,0.22)',
   },
   copy: {
     flex: 1,
     gap: spacing.xs,
   },
   title: {
-    fontSize: 21,
-    fontWeight: '800',
-    lineHeight: 27,
+    fontSize: 17,
+    fontWeight: '900',
+    lineHeight: 22,
   },
   subtitle: {
-    fontSize: 14,
-    lineHeight: 19,
+    ...typography.caption,
     opacity: 0.88,
   },
 });

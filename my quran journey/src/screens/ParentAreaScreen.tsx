@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
-import { colors, radii, shadows, spacing } from '@/theme/theme';
 import { Screen } from '@/components/Screen';
+import { SectionPanel } from '@/components/SectionPanel';
 import { VerificationBadge } from '@/components/VerificationBadge';
 import { placeholderSurahs } from '@/data/surahs.placeholder';
 import { translate } from '@/i18n';
 import { summarizeProgress } from '@/services/progressService';
 import { useProgress } from '@/store/progressStore';
+import { colors, radii, spacing, typography } from '@/theme/theme';
 import type { UiLanguage } from '@/types/progress';
 
 export const ParentAreaScreen = () => {
@@ -20,9 +21,7 @@ export const ParentAreaScreen = () => {
   if (!unlocked) {
     return (
       <Screen>
-        <View style={styles.gateCard}>
-          <Text style={styles.title}>{t('parentArea')}</Text>
-          <Text style={styles.bodyText}>{t('parentGateQuestion')}</Text>
+        <SectionPanel title={t('parentArea')} caption={t('parentGateQuestion')} tone="plain">
           <TextInput
             accessibilityLabel={t('parentGateQuestion')}
             value={answer}
@@ -44,7 +43,7 @@ export const ParentAreaScreen = () => {
             <Text style={styles.primaryActionText}>{t('unlockParentArea')}</Text>
           </Pressable>
           {message ? <Text style={styles.feedback}>{message}</Text> : null}
-        </View>
+        </SectionPanel>
       </Screen>
     );
   }
@@ -55,36 +54,23 @@ export const ParentAreaScreen = () => {
 
   return (
     <Screen>
-      <View style={styles.card}>
-        <Text style={styles.title}>{t('parentArea')}</Text>
-        <Text style={styles.bodyText}>{t('quranDisclaimer')}</Text>
-      </View>
+      <SectionPanel title={t('parentArea')} caption={t('quranDisclaimer')} tone="warm">
+        <View style={styles.summaryGrid}>
+          <SummaryTile label={t('lettersLearned')} value={summary.learnedLetterCount.toString()} />
+          <SummaryTile label={t('gamesCompleted')} value={summary.gamesCompletedCount.toString()} />
+          <SummaryTile label={t('stars')} value={summary.starsEarned.toString()} />
+        </View>
+      </SectionPanel>
 
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>{t('progress')}</Text>
-        <Text style={styles.bodyText}>{`${t('lettersLearned')}: ${summary.learnedLetterCount}`}</Text>
-        <Text style={styles.bodyText}>{`${t('gamesCompleted')}: ${summary.gamesCompletedCount}`}</Text>
-        <Text style={styles.bodyText}>{`${t('stars')}: ${summary.starsEarned}`}</Text>
-      </View>
-
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>{t('language')}</Text>
+      <SectionPanel title={t('language')} caption="Choose how much Arabic appears in the interface." tone="plain">
         <View style={styles.segmentedRow}>
           {(['en', 'ar', 'bilingual'] as UiLanguage[]).map((language) => (
             <Pressable
               key={language}
-              style={[
-                styles.segment,
-                progress.settings.language === language && styles.segmentActive,
-              ]}
+              style={[styles.segment, progress.settings.language === language && styles.segmentActive]}
               onPress={() => setLanguage(language)}
             >
-              <Text
-                style={[
-                  styles.segmentText,
-                  progress.settings.language === language && styles.segmentTextActive,
-                ]}
-              >
+              <Text style={[styles.segmentText, progress.settings.language === language && styles.segmentTextActive]}>
                 {language === 'en' ? t('english') : language === 'ar' ? t('arabic') : t('bilingual')}
               </Text>
             </Pressable>
@@ -106,28 +92,23 @@ export const ParentAreaScreen = () => {
           value={progress.settings.reduceSoundEffects}
           onValueChange={(value) => setSettings({ reduceSoundEffects: value })}
         />
-      </View>
+      </SectionPanel>
 
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>{t('contentVerification')}</Text>
+      <SectionPanel title={t('contentVerification')} caption={t('aboutSources')} tone="plain">
         {placeholderSurahs.map((surah) => (
           <View key={surah.surahNumber} style={styles.verificationRow}>
-            <View>
+            <View style={styles.verificationCopy}>
               <Text style={styles.bodyText}>{surah.surahNameEnglish}</Text>
               <Text style={styles.surahArabic}>{surah.surahNameArabic}</Text>
             </View>
             <VerificationBadge verification={surah.verification} />
           </View>
         ))}
-      </View>
-
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>{t('aboutSources')}</Text>
-        <Text style={styles.bodyText}>
+        <Text style={styles.sourceNote}>
           TODO: Add verified Mushaf source files, scholar/teacher review metadata, and certified
           recitation audio references before release.
         </Text>
-      </View>
+      </SectionPanel>
 
       <Pressable
         style={styles.dangerAction}
@@ -143,6 +124,13 @@ export const ParentAreaScreen = () => {
   );
 };
 
+const SummaryTile = ({ label, value }: { label: string; value: string }) => (
+  <View style={styles.summaryTile}>
+    <Text style={styles.summaryValue}>{value}</Text>
+    <Text style={styles.summaryLabel}>{label}</Text>
+  </View>
+);
+
 const SettingSwitch = ({
   label,
   value,
@@ -154,77 +142,87 @@ const SettingSwitch = ({
 }) => (
   <View style={styles.switchRow}>
     <Text style={styles.switchLabel}>{label}</Text>
-    <Switch value={value} onValueChange={onValueChange} />
+    <Switch
+      value={value}
+      onValueChange={onValueChange}
+      trackColor={{ false: colors.borderStrong, true: colors.mint }}
+      thumbColor={value ? colors.primary : colors.surface}
+    />
   </View>
 );
 
 const styles = StyleSheet.create({
-  gateCard: {
-    backgroundColor: colors.surface,
-    borderRadius: radii.lg,
-    padding: spacing.lg,
-    gap: spacing.md,
-    ...shadows.soft,
-  },
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: radii.md,
-    padding: spacing.lg,
-    gap: spacing.md,
-    ...shadows.soft,
-  },
-  title: {
-    color: colors.primaryDark,
-    fontSize: 28,
-    fontWeight: '900',
-  },
-  sectionTitle: {
-    color: colors.primaryDark,
-    fontSize: 20,
-    fontWeight: '900',
-  },
-  bodyText: {
-    color: colors.text,
-    fontSize: 16,
-    lineHeight: 23,
-  },
   input: {
-    minHeight: 58,
-    borderRadius: radii.md,
-    borderWidth: 2,
-    borderColor: colors.border,
+    minHeight: 56,
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    borderColor: colors.borderStrong,
     paddingHorizontal: spacing.md,
     fontSize: 22,
     color: colors.text,
-    backgroundColor: colors.background,
+    backgroundColor: colors.surfaceSoft,
   },
   primaryAction: {
-    minHeight: 58,
+    minHeight: 52,
     borderRadius: radii.pill,
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: spacing.lg,
   },
   primaryActionText: {
-    color: '#FFFFFF',
-    fontSize: 18,
+    color: colors.white,
+    fontSize: 15,
     fontWeight: '900',
   },
+  summaryGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  summaryTile: {
+    minWidth: 104,
+    flexGrow: 1,
+    borderRadius: radii.lg,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: '#E6D4A6',
+    padding: spacing.md,
+  },
+  summaryValue: {
+    color: colors.primaryDark,
+    fontSize: 28,
+    fontWeight: '900',
+  },
+  summaryLabel: {
+    ...typography.caption,
+    color: colors.muted,
+  },
+  bodyText: {
+    ...typography.body,
+    color: colors.text,
+    fontWeight: '800',
+  },
+  sourceNote: {
+    ...typography.caption,
+    color: colors.placeholder,
+  },
   dangerAction: {
-    minHeight: 58,
+    minHeight: 52,
     borderRadius: radii.pill,
     backgroundColor: colors.danger,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: spacing.lg,
   },
   dangerActionText: {
-    color: '#FFFFFF',
-    fontSize: 18,
+    color: colors.white,
+    fontSize: 15,
     fontWeight: '900',
   },
   feedback: {
     color: colors.success,
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '900',
     textAlign: 'center',
   },
@@ -234,11 +232,11 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   segment: {
-    minHeight: 48,
+    minHeight: 44,
     borderRadius: radii.pill,
-    borderWidth: 2,
-    borderColor: colors.border,
-    paddingHorizontal: spacing.lg,
+    borderWidth: 1,
+    borderColor: colors.borderStrong,
+    paddingHorizontal: spacing.md,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -251,20 +249,22 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   segmentTextActive: {
-    color: '#FFFFFF',
+    color: colors.white,
   },
   switchRow: {
-    minHeight: 54,
+    minHeight: 52,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderTopWidth: 1,
     borderTopColor: colors.border,
     paddingTop: spacing.sm,
+    gap: spacing.md,
   },
   switchLabel: {
     color: colors.text,
-    fontSize: 16,
+    fontSize: 15,
+    lineHeight: 20,
     fontWeight: '800',
     flex: 1,
   },
@@ -277,9 +277,12 @@ const styles = StyleSheet.create({
     borderTopColor: colors.border,
     paddingTop: spacing.sm,
   },
+  verificationCopy: {
+    flex: 1,
+  },
   surahArabic: {
     color: colors.primaryDark,
-    fontSize: 18,
+    fontSize: 19,
     fontWeight: '900',
     writingDirection: 'rtl',
   },

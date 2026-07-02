@@ -1,13 +1,14 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { colors, radii, shadows, spacing } from '@/theme/theme';
 import { Screen } from '@/components/Screen';
+import { SectionPanel } from '@/components/SectionPanel';
 import { VerificationBadge } from '@/components/VerificationBadge';
 import { placeholderSurahs } from '@/data/surahs.placeholder';
 import { translate } from '@/i18n';
 import type { RootStackParamList } from '@/navigation/types';
 import { getQuranSafetyMessage } from '@/services/contentVerificationService';
 import { useProgress } from '@/store/progressStore';
+import { colors, radii, spacing, typography } from '@/theme/theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Surahs'>;
 
@@ -17,27 +18,27 @@ export const SurahListScreen = ({ navigation }: Props) => {
 
   return (
     <Screen>
-      <View style={styles.notice}>
-        <Text style={styles.title}>{t('shortSurahs')}</Text>
-        <Text style={styles.bodyText}>{t('surahPlaceholder')}</Text>
-        <Text style={styles.bodyText}>{t('surahParentNote')}</Text>
-      </View>
+      <SectionPanel title={t('shortSurahs')} caption={t('surahParentNote')} tone="warm">
+        <Text style={styles.noticeText}>{t('surahPlaceholder')}</Text>
+      </SectionPanel>
 
       {placeholderSurahs.map((surah) => (
         <Pressable
           key={surah.surahNumber}
           accessibilityRole="button"
           onPress={() => navigation.navigate('SurahDetail', { surahNumber: surah.surahNumber })}
-          style={styles.card}
+          style={({ pressed }) => [styles.card, pressed && styles.pressed]}
         >
           <View style={styles.cardHeader}>
-            <View>
+            <View style={styles.surahNumberBadge}>
+              <Text style={styles.surahNumber}>{surah.surahNumber}</Text>
+            </View>
+            <View style={styles.surahCopy}>
               <Text style={styles.surahName}>{surah.surahNameEnglish}</Text>
               <Text style={styles.surahArabic}>{surah.surahNameArabic}</Text>
             </View>
-            <Text style={styles.surahNumber}>{surah.surahNumber}</Text>
+            <VerificationBadge verification={surah.verification} />
           </View>
-          <VerificationBadge verification={surah.verification} />
           <Text style={styles.bodyText}>{getQuranSafetyMessage(surah)}</Text>
         </Pressable>
       ))}
@@ -46,50 +47,55 @@ export const SurahListScreen = ({ navigation }: Props) => {
 };
 
 const styles = StyleSheet.create({
-  notice: {
-    backgroundColor: colors.surfaceSoft,
-    borderRadius: radii.lg,
-    padding: spacing.lg,
-    gap: spacing.sm,
-    borderWidth: 2,
-    borderColor: colors.secondary,
-  },
-  title: {
-    color: colors.primaryDark,
-    fontSize: 28,
-    fontWeight: '900',
-  },
-  bodyText: {
+  noticeText: {
+    ...typography.body,
     color: colors.text,
-    fontSize: 16,
-    lineHeight: 23,
   },
   card: {
     backgroundColor: colors.surface,
-    borderRadius: radii.md,
+    borderRadius: radii.lg,
     padding: spacing.lg,
     gap: spacing.md,
-    ...shadows.soft,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  pressed: {
+    opacity: 0.78,
   },
   cardHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    alignItems: 'center',
     gap: spacing.md,
+  },
+  surahNumberBadge: {
+    width: 48,
+    height: 48,
+    borderRadius: radii.lg,
+    backgroundColor: colors.surfaceSoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  surahNumber: {
+    color: colors.secondary,
+    fontSize: 19,
+    fontWeight: '900',
+  },
+  surahCopy: {
+    flex: 1,
   },
   surahName: {
     color: colors.text,
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: '900',
   },
   surahArabic: {
     color: colors.primaryDark,
-    fontSize: 26,
+    fontSize: 23,
     fontWeight: '900',
     writingDirection: 'rtl',
   },
-  surahNumber: {
-    color: colors.secondary,
-    fontSize: 28,
-    fontWeight: '900',
+  bodyText: {
+    ...typography.body,
+    color: colors.text,
   },
 });

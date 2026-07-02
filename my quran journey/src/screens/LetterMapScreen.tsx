@@ -1,25 +1,41 @@
 import { StyleSheet, Text, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { colors, spacing } from '@/theme/theme';
 import { ArabicLetterCard } from '@/components/ArabicLetterCard';
 import { Screen } from '@/components/Screen';
+import { SectionPanel } from '@/components/SectionPanel';
 import { arabicLetters } from '@/data/arabicLetters';
 import { translate } from '@/i18n';
 import type { RootStackParamList } from '@/navigation/types';
 import { useProgress } from '@/store/progressStore';
+import { colors, spacing, typography } from '@/theme/theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'LetterMap'>;
 
 export const LetterMapScreen = ({ navigation }: Props) => {
   const { progress } = useProgress();
   const t = (key: Parameters<typeof translate>[0]) => translate(key, progress.settings.language);
+  const learnedCount = progress.lettersLearned.length;
 
   return (
     <Screen>
-      <View>
-        <Text style={styles.title}>{t('lettersTitle')}</Text>
-        <Text style={styles.subtitle}>{t('keepPracticing')}</Text>
-      </View>
+      <SectionPanel
+        title={t('lettersTitle')}
+        caption={t('keepPracticing')}
+        tone="cool"
+        trailing={<Text style={styles.counter}>{learnedCount}/{arabicLetters.length}</Text>}
+      >
+        <View style={styles.legendRow}>
+          <View style={styles.legendItem}>
+            <View style={[styles.legendDot, styles.legendDotReady]} />
+            <Text style={styles.legendText}>Ready</Text>
+          </View>
+          <View style={styles.legendItem}>
+            <View style={[styles.legendDot, styles.legendDotDone]} />
+            <Text style={styles.legendText}>Learned</Text>
+          </View>
+        </View>
+      </SectionPanel>
+
       <View style={styles.grid}>
         {arabicLetters.map((letter) => (
           <ArabicLetterCard
@@ -35,20 +51,39 @@ export const LetterMapScreen = ({ navigation }: Props) => {
 };
 
 const styles = StyleSheet.create({
-  title: {
-    color: colors.primaryDark,
-    fontSize: 30,
+  counter: {
+    color: colors.primary,
+    fontSize: 20,
     fontWeight: '900',
   },
-  subtitle: {
+  legendRow: {
+    flexDirection: 'row',
+    gap: spacing.lg,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
+  legendDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+  },
+  legendDotReady: {
+    backgroundColor: colors.borderStrong,
+  },
+  legendDotDone: {
+    backgroundColor: colors.secondary,
+  },
+  legendText: {
+    ...typography.caption,
     color: colors.muted,
-    fontSize: 16,
-    marginTop: spacing.xs,
   },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center',
-    gap: spacing.md,
+    justifyContent: 'space-between',
+    rowGap: spacing.md,
   },
 });

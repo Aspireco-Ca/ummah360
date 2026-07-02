@@ -45,6 +45,8 @@ export const TraceCanvas = ({ guideLetter, prompt, onTraceComplete }: TraceCanva
     <View>
       <Text style={styles.prompt}>{prompt}</Text>
       <View style={styles.canvas} {...responder.panHandlers}>
+        <View style={styles.paperLine} />
+        <View style={[styles.paperLine, styles.paperLineLower]} />
         <Text style={styles.guide}>{guideLetter}</Text>
         {points.map((point, index) => (
           <View
@@ -60,32 +62,45 @@ export const TraceCanvas = ({ guideLetter, prompt, onTraceComplete }: TraceCanva
 const styles = StyleSheet.create({
   prompt: {
     color: colors.muted,
-    fontSize: 15,
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: '700',
     marginBottom: spacing.sm,
   },
   canvas: {
-    minHeight: 220,
+    minHeight: 178,
     borderRadius: radii.lg,
-    borderWidth: 2,
+    borderWidth: 1,
     borderStyle: 'dashed',
-    borderColor: colors.primary,
-    backgroundColor: '#FFFDF6',
+    borderColor: colors.borderStrong,
+    backgroundColor: colors.surfaceSoft,
     overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  paperLine: {
+    position: 'absolute',
+    left: 18,
+    right: 18,
+    top: 66,
+    borderTopWidth: 1,
+    borderTopColor: '#E6D7B8',
+  },
+  paperLineLower: {
+    top: 118,
+  },
   guide: {
     position: 'absolute',
-    color: '#D9CFB2',
-    fontSize: 150,
+    color: '#D4C59F',
+    fontSize: 128,
     fontWeight: '800',
     writingDirection: 'rtl',
   },
   dot: {
     position: 'absolute',
-    width: 10,
-    height: 10,
+    width: 9,
+    height: 9,
     borderRadius: 5,
-    backgroundColor: colors.accent,
+    backgroundColor: colors.primary,
   },
 });

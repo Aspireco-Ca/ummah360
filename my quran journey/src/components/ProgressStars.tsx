@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   },
   star: {
     color: colors.secondary,
-    fontSize: 24,
+    fontSize: 20,
   },
   more: {
     color: colors.muted,

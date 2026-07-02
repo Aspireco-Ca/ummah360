@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors, radii, shadows, spacing } from '@/theme/theme';
+import { colors, radii, spacing, typography } from '@/theme/theme';
 
 interface GameCardProps {
   title: string;
@@ -15,7 +15,7 @@ export const GameCard = ({ title, description, active = false, onPress }: GameCa
     onPress={onPress}
     style={({ pressed }) => [styles.card, active && styles.active, pressed && styles.pressed]}
   >
-    <View style={styles.marker} />
+    <View style={[styles.marker, active && styles.markerActive]} />
     <View style={styles.copy}>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.description}>{description}</Text>
@@ -26,39 +26,44 @@ export const GameCard = ({ title, description, active = false, onPress }: GameCa
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
-    borderRadius: radii.md,
+    borderRadius: radii.lg,
     padding: spacing.md,
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: colors.border,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.md,
-    ...shadows.soft,
+    gap: spacing.sm,
+    flexGrow: 1,
+    minWidth: 150,
+    width: '48%',
   },
   active: {
     borderColor: colors.primary,
-    backgroundColor: colors.surfaceSoft,
+    backgroundColor: colors.surfaceCool,
   },
   pressed: {
     opacity: 0.78,
   },
   marker: {
-    width: 18,
-    height: 58,
+    width: 10,
+    height: 42,
     borderRadius: radii.pill,
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.borderStrong,
+  },
+  markerActive: {
+    backgroundColor: colors.primary,
   },
   copy: {
     flex: 1,
   },
   title: {
     color: colors.text,
-    fontSize: 18,
-    fontWeight: '800',
+    fontSize: 15,
+    lineHeight: 19,
+    fontWeight: '900',
   },
   description: {
+    ...typography.caption,
     color: colors.muted,
-    fontSize: 14,
-    lineHeight: 20,
   },
 });

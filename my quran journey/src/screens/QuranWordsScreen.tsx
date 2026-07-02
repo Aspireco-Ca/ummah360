@@ -1,12 +1,13 @@
 import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors, radii, shadows, spacing } from '@/theme/theme';
 import { AudioButton } from '@/components/AudioButton';
 import { Screen } from '@/components/Screen';
+import { SectionPanel } from '@/components/SectionPanel';
 import { arabicLetters, harakat } from '@/data/arabicLetters';
 import { practiceWords } from '@/data/practiceWords';
 import { translate } from '@/i18n';
 import { useProgress } from '@/store/progressStore';
+import { colors, radii, spacing, typography } from '@/theme/theme';
 import { checkHarakahAnswer, checkLetterAnswer } from '@/utils/gameLogic';
 import { shuffle } from '@/utils/randomize';
 
@@ -35,13 +36,14 @@ export const QuranWordsScreen = () => {
 
   return (
     <Screen>
-      <View style={styles.notice}>
-        <Text style={styles.noticeTitle}>{t('practiceWords')}</Text>
-        <Text style={styles.noticeText}>{t('practiceWordsSafeLabel')}</Text>
-      </View>
+      <SectionPanel title={t('practiceWords')} caption={t('practiceWordsSafeLabel')} tone="warm">
+        <View style={styles.wordHero}>
+          <Text style={styles.wordHeroText}>{word.arabic}</Text>
+          <Text style={styles.wordHeroLabel}>Practice word</Text>
+        </View>
+      </SectionPanel>
 
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>{t('harakatIntro')}</Text>
+      <SectionPanel title={t('harakatIntro')} caption="Short vowels children meet before Quran reading." tone="plain">
         <View style={styles.harakatGrid}>
           {harakat.slice(0, 5).map((item) => (
             <View key={item.id} style={styles.harakahCard}>
@@ -52,10 +54,9 @@ export const QuranWordsScreen = () => {
             </View>
           ))}
         </View>
-      </View>
+      </SectionPanel>
 
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>{t('matchHarakah')}</Text>
+      <SectionPanel title={t('matchHarakah')} caption="Pick the vowel mark that matches the sound." tone="cool">
         <Text style={styles.bigCombo}>{targetLetter.arabic + targetHarakah.mark}</Text>
         <View style={styles.optionRow}>
           {harakahOptions.map((item) => (
@@ -65,12 +66,10 @@ export const QuranWordsScreen = () => {
             </Pressable>
           ))}
         </View>
-      </View>
+      </SectionPanel>
 
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>{t('findInPracticeWord')}</Text>
+      <SectionPanel title={t('findInPracticeWord')} caption={`${targetLetter.nameEnglish} / ${targetLetter.nameArabic}`} tone="plain">
         <Text style={styles.word}>{word.arabic}</Text>
-        <Text style={styles.bodyText}>{`${targetLetter.nameEnglish} / ${targetLetter.nameArabic}`}</Text>
         <View style={styles.optionRow}>
           {word.targetLetterIds.map((letterId) => {
             const item = arabicLetters.find((letter) => letter.id === letterId) ?? arabicLetters[0];
@@ -81,13 +80,11 @@ export const QuranWordsScreen = () => {
             );
           })}
         </View>
-      </View>
+      </SectionPanel>
 
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>{t('listenPick')}</Text>
-        <Text style={styles.bodyText}>{t('audioPlaceholder')}</Text>
+      <SectionPanel title={t('listenPick')} caption={t('audioPlaceholder')} tone="plain">
         <AudioButton label={t('playAudio')} audioKey={word.audioKey} kind="practiceWord" />
-      </View>
+      </SectionPanel>
 
       {feedback ? <Text style={styles.feedback}>{feedback}</Text> : null}
     </Screen>
@@ -95,40 +92,25 @@ export const QuranWordsScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  notice: {
-    backgroundColor: colors.surfaceSoft,
+  wordHero: {
     borderRadius: radii.lg,
-    padding: spacing.lg,
-    borderWidth: 2,
-    borderColor: colors.secondary,
-  },
-  noticeTitle: {
-    color: colors.primaryDark,
-    fontSize: 26,
-    fontWeight: '900',
-  },
-  noticeText: {
-    color: colors.text,
-    fontSize: 16,
-    lineHeight: 22,
-    marginTop: spacing.xs,
-  },
-  card: {
     backgroundColor: colors.surface,
-    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: '#E6D4A6',
     padding: spacing.lg,
-    gap: spacing.md,
-    ...shadows.soft,
+    alignItems: 'center',
+    gap: spacing.xs,
   },
-  sectionTitle: {
+  wordHeroText: {
     color: colors.primaryDark,
-    fontSize: 20,
+    fontSize: 58,
+    lineHeight: 72,
     fontWeight: '900',
+    writingDirection: 'rtl',
   },
-  bodyText: {
-    color: colors.text,
-    fontSize: 16,
-    lineHeight: 23,
+  wordHeroLabel: {
+    ...typography.caption,
+    color: colors.placeholder,
   },
   harakatGrid: {
     flexDirection: 'row',
@@ -136,35 +118,37 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   harakahCard: {
-    minWidth: 112,
+    minWidth: 96,
     flexGrow: 1,
-    backgroundColor: colors.mint,
-    borderRadius: radii.md,
-    padding: spacing.md,
+    backgroundColor: colors.surfaceCool,
+    borderRadius: radii.lg,
+    padding: spacing.sm,
     alignItems: 'center',
   },
   harakahMark: {
     color: colors.primaryDark,
-    fontSize: 40,
+    fontSize: 32,
+    lineHeight: 40,
     fontWeight: '900',
   },
   harakahName: {
     color: colors.text,
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '900',
   },
   harakahArabic: {
     color: colors.muted,
-    fontSize: 15,
+    fontSize: 14,
     writingDirection: 'rtl',
   },
   harakahHint: {
+    ...typography.caption,
     color: colors.text,
-    fontSize: 13,
   },
   bigCombo: {
     color: colors.primaryDark,
-    fontSize: 88,
+    fontSize: 76,
+    lineHeight: 92,
     fontWeight: '900',
     textAlign: 'center',
     writingDirection: 'rtl',
@@ -175,50 +159,56 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   option: {
-    minHeight: 64,
-    minWidth: 126,
+    minHeight: 58,
+    minWidth: 116,
     flexGrow: 1,
-    borderRadius: radii.md,
-    backgroundColor: colors.sky,
+    borderRadius: radii.lg,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
     padding: spacing.sm,
   },
   optionText: {
     color: colors.text,
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '900',
   },
   optionArabic: {
     color: colors.primaryDark,
-    fontSize: 30,
+    fontSize: 25,
     writingDirection: 'rtl',
   },
   word: {
     color: colors.primaryDark,
-    fontSize: 64,
+    fontSize: 54,
+    lineHeight: 68,
     fontWeight: '900',
     textAlign: 'center',
     writingDirection: 'rtl',
   },
   letterOption: {
-    width: 74,
-    height: 74,
-    borderRadius: radii.md,
+    width: 62,
+    height: 62,
+    borderRadius: radii.lg,
     backgroundColor: colors.lavender,
     alignItems: 'center',
     justifyContent: 'center',
   },
   letterOptionText: {
     color: colors.text,
-    fontSize: 38,
+    fontSize: 34,
     fontWeight: '900',
     writingDirection: 'rtl',
   },
   feedback: {
     color: colors.success,
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: '900',
     textAlign: 'center',
+    backgroundColor: '#EAF6EE',
+    borderRadius: radii.pill,
+    paddingVertical: spacing.sm,
   },
 });

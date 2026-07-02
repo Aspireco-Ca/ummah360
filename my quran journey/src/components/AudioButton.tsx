@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
-import { colors, radii, spacing } from '@/theme/theme';
+import { colors, radii, spacing, typography } from '@/theme/theme';
 import { playLetterAudio, playPracticeWordAudio, playSurahAyahAudio } from '@/services/audioService';
 
 interface AudioButtonProps {
@@ -39,9 +39,9 @@ export const AudioButton = ({ label, audioKey, kind, disabled = false }: AudioBu
 
 const styles = StyleSheet.create({
   button: {
-    minHeight: 56,
+    minHeight: 46,
     borderRadius: radii.pill,
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: spacing.md,
     backgroundColor: colors.primary,
     flexDirection: 'row',
     alignItems: 'center',
@@ -56,12 +56,11 @@ const styles = StyleSheet.create({
   },
   symbol: {
     color: '#FFFFFF',
-    fontSize: 22,
+    fontSize: 17,
     fontWeight: '800',
   },
   label: {
     color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '800',
+    ...typography.caption,
   },
 });
