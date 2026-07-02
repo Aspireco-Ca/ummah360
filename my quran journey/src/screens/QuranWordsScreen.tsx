@@ -6,6 +6,7 @@ import { SectionPanel } from '@/components/SectionPanel';
 import { arabicLetters, harakat } from '@/data/arabicLetters';
 import { practiceWords } from '@/data/practiceWords';
 import { translate } from '@/i18n';
+import { playFeedbackAudio } from '@/services/audioService';
 import { useProgress } from '@/store/progressStore';
 import { colors, radii, spacing, typography } from '@/theme/theme';
 import { checkHarakahAnswer, checkLetterAnswer } from '@/utils/gameLogic';
@@ -19,10 +20,14 @@ export const QuranWordsScreen = () => {
   const targetLetter = arabicLetters.find((letter) => letter.id === word.targetLetterIds[0]) ?? arabicLetters[0];
   const targetHarakah = harakat[0];
   const harakahOptions = useMemo(() => shuffle(harakat.slice(0, 4)), []);
+  const canPlayFeedback = progress.settings.audioEnabled && !progress.settings.reduceSoundEffects;
 
   const answerLetter = async (letterId: string) => {
     const result = checkLetterAnswer(letterId, targetLetter.id);
     setFeedback(t(result.feedbackKey));
+    if (canPlayFeedback) {
+      void playFeedbackAudio(result.feedbackKey);
+    }
 
     if (result.correct) {
       await practiceLetter(targetLetter.id);
@@ -32,6 +37,9 @@ export const QuranWordsScreen = () => {
   const answerHarakah = (harakahId: string) => {
     const result = checkHarakahAnswer(harakahId, targetHarakah.id);
     setFeedback(t(result.feedbackKey));
+    if (canPlayFeedback) {
+      void playFeedbackAudio(result.feedbackKey);
+    }
   };
 
   return (

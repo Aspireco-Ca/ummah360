@@ -8,6 +8,7 @@ import { arabicLetters, harakat } from '@/data/arabicLetters';
 import { practiceWords } from '@/data/practiceWords';
 import { placeholderSurahs } from '@/data/surahs.placeholder';
 import { translate, type TranslationKey } from '@/i18n';
+import { playFeedbackAudio } from '@/services/audioService';
 import { useProgress } from '@/store/progressStore';
 import { colors, radii, spacing, typography } from '@/theme/theme';
 import type { GameDefinition, GameId } from '@/types/game';
@@ -26,9 +27,13 @@ export const GamesScreen = () => {
   const [activeGame, setActiveGame] = useState<GameId>('letter-pop');
   const [feedback, setFeedback] = useState('');
   const t = (key: TranslationKey) => translate(key, progress.settings.language);
+  const canPlayFeedback = progress.settings.audioEnabled && !progress.settings.reduceSoundEffects;
 
   const answer = async (gameId: GameId, correct: boolean, feedbackKey: TranslationKey) => {
     setFeedback(t(feedbackKey));
+    if (canPlayFeedback) {
+      void playFeedbackAudio(feedbackKey);
+    }
 
     if (correct) {
       await completeGame(gameId);
@@ -146,6 +151,9 @@ export const GamesScreen = () => {
           onPress={() => {
             void practiceSurah(surah.surahNumber);
             setFeedback(t('beautifulEffort'));
+            if (canPlayFeedback) {
+              void playFeedbackAudio('beautifulEffort');
+            }
           }}
         >
           <Text style={styles.primaryActionText}>{t('markComplete')}</Text>

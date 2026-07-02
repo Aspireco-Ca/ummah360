@@ -49,6 +49,7 @@
     "web": "node ../node_modules/expo/bin/cli start --web",
     "start:local": "node ./node_modules/expo/bin/cli start",
     "deps:externalize": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/externalize-node-modules.ps1",
+    "audio:generate": "node ./scripts/generate-learning-audio.mjs",
     "typecheck": "node ../node_modules/typescript/bin/tsc --noEmit",
     "test": "node ../node_modules/tsx/dist/cli.mjs src/tests/runTests.ts"
   },

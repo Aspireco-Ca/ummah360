@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
 import { colors, radii, spacing, typography } from '@/theme/theme';
-import { playLetterAudio, playPracticeWordAudio, playSurahAyahAudio } from '@/services/audioService';
+import { hasAudio, playLetterAudio, playPracticeWordAudio, playSurahAyahAudio } from '@/services/audioService';
+import { useProgress } from '@/store/progressStore';
 
 interface AudioButtonProps {
   label: string;
@@ -10,8 +11,12 @@ interface AudioButtonProps {
 }
 
 export const AudioButton = ({ label, audioKey, kind, disabled = false }: AudioButtonProps) => {
+  const { progress } = useProgress();
+  const unavailable = kind === 'surahAyah' || !hasAudio(audioKey);
+  const isDisabled = disabled || unavailable || !progress.settings.audioEnabled;
+
   const play = async () => {
-    if (disabled) {
+    if (isDisabled) {
       return;
     }
 
@@ -28,8 +33,10 @@ export const AudioButton = ({ label, audioKey, kind, disabled = false }: AudioBu
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
+      accessibilityState={{ disabled: isDisabled }}
+      disabled={isDisabled}
       onPress={play}
-      style={({ pressed }) => [styles.button, disabled && styles.disabled, pressed && styles.pressed]}
+      style={({ pressed }) => [styles.button, isDisabled && styles.disabled, pressed && !isDisabled && styles.pressed]}
     >
       <Text style={styles.symbol}>♪</Text>
       <Text style={styles.label}>{label}</Text>

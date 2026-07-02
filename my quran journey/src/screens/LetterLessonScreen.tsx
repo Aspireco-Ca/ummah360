@@ -8,6 +8,7 @@ import { TraceCanvas } from '@/components/TraceCanvas';
 import { arabicLetters, getLetterById } from '@/data/arabicLetters';
 import { translate } from '@/i18n';
 import type { RootStackParamList } from '@/navigation/types';
+import { playFeedbackAudio } from '@/services/audioService';
 import { useProgress } from '@/store/progressStore';
 import { colors, radii, spacing, typography } from '@/theme/theme';
 import { checkLetterAnswer, checkTextAnswer } from '@/utils/gameLogic';
@@ -21,6 +22,7 @@ export const LetterLessonScreen = ({ navigation, route }: Props) => {
   const letter = getLetterById(route.params.letterId) ?? arabicLetters[0];
   const t = (key: Parameters<typeof translate>[0]) => translate(key, progress.settings.language);
   const learned = progress.lettersLearned.includes(letter.id);
+  const canPlayFeedback = progress.settings.audioEnabled && !progress.settings.reduceSoundEffects;
 
   const findOptions = useMemo(
     () => shuffle([letter, ...takeRandom(arabicLetters.filter((item) => item.id !== letter.id), 3)]),
@@ -50,6 +52,9 @@ export const LetterLessonScreen = ({ navigation, route }: Props) => {
   const answerLetter = async (letterId: string) => {
     const result = checkLetterAnswer(letterId, letter.id);
     setFeedback(t(result.feedbackKey));
+    if (canPlayFeedback) {
+      void playFeedbackAudio(result.feedbackKey);
+    }
 
     if (result.correct) {
       await practiceLetter(letter.id);
@@ -59,6 +64,9 @@ export const LetterLessonScreen = ({ navigation, route }: Props) => {
   const answerSound = async (name: string) => {
     const result = checkTextAnswer(name, letter.nameEnglish);
     setFeedback(t(result.feedbackKey));
+    if (canPlayFeedback) {
+      void playFeedbackAudio(result.feedbackKey);
+    }
 
     if (result.correct) {
       await practiceLetter(letter.id);
@@ -68,6 +76,9 @@ export const LetterLessonScreen = ({ navigation, route }: Props) => {
   const markComplete = async () => {
     await completeLetter(letter.id);
     setFeedback(t('beautifulEffort'));
+    if (canPlayFeedback) {
+      void playFeedbackAudio('beautifulEffort');
+    }
   };
 
   return (
@@ -96,6 +107,22 @@ export const LetterLessonScreen = ({ navigation, route }: Props) => {
         ))}
       </View>
 
+      <SectionPanel title="Learning loop" caption="A calm routine for memory: hear it, say it, draw it, find it." tone="cool">
+        <View style={styles.loopRow}>
+          {[
+            ['1', 'Listen'],
+            ['2', 'Say'],
+            ['3', 'Trace'],
+            ['4', 'Find'],
+          ].map(([step, label]) => (
+            <View key={step} style={styles.loopStep}>
+              <Text style={styles.loopNumber}>{step}</Text>
+              <Text style={styles.loopLabel}>{label}</Text>
+            </View>
+          ))}
+        </View>
+      </SectionPanel>
+
       <SectionPanel title={t('exampleWord')} caption={t('pronunciationTip')} tone="plain">
         <View style={styles.infoGrid}>
           <View style={styles.wordBox}>
@@ -112,7 +139,12 @@ export const LetterLessonScreen = ({ navigation, route }: Props) => {
         <TraceCanvas
           guideLetter={letter.arabic}
           prompt={t('tracePrompt')}
-          onTraceComplete={() => practiceLetter(letter.id)}
+          onTraceComplete={() => {
+            void practiceLetter(letter.id);
+            if (canPlayFeedback) {
+              void playFeedbackAudio('beautifulEffort');
+            }
+          }}
         />
       </SectionPanel>
 
@@ -229,6 +261,38 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.sm,
+  },
+  loopRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  loopStep: {
+    flexGrow: 1,
+    minWidth: 68,
+    borderRadius: radii.lg,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: '#C9DED6',
+    padding: spacing.sm,
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
+  loopNumber: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: colors.primary,
+    color: colors.white,
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    fontSize: 13,
+    fontWeight: '900',
+  },
+  loopLabel: {
+    ...typography.caption,
+    color: colors.text,
+    textAlign: 'center',
   },
   formChip: {
     flexGrow: 1,
