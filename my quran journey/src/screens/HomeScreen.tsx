@@ -67,11 +67,11 @@ export const HomeScreen = ({ navigation }: Props) => {
             <Text style={styles.todaySubtitle}>{nextLetter.nameArabic}</Text>
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel={t('learnLetters')}
+              accessibilityLabel="Start lesson"
               style={({ pressed }) => [styles.primaryAction, pressed && styles.pressed]}
               onPress={() => navigation.navigate('LetterLesson', { letterId: nextLetter.id })}
             >
-              <Text style={styles.primaryActionText}>{t('learnLetters')}</Text>
+              <Text style={styles.primaryActionText}>Start lesson</Text>
             </Pressable>
           </View>
         </View>
@@ -136,10 +136,10 @@ const styles = StyleSheet.create({
     paddingTop: spacing.lg,
   },
   hero: {
-    minHeight: 248,
+    minHeight: 224,
     borderRadius: radii.xl,
     backgroundColor: colors.inkPanel,
-    padding: spacing.xl,
+    padding: spacing.lg,
     overflow: 'hidden',
     gap: spacing.md,
     ...shadows.raised,
@@ -184,8 +184,8 @@ const styles = StyleSheet.create({
   },
   appName: {
     color: colors.white,
-    fontSize: 37,
-    lineHeight: 43,
+    fontSize: 34,
+    lineHeight: 39,
     fontWeight: '900',
   },
   tagline: {
@@ -239,8 +239,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   todayLetterTile: {
-    width: 88,
-    height: 92,
+    width: 82,
+    height: 86,
     borderRadius: radii.lg,
     backgroundColor: colors.surfaceCool,
     borderWidth: 1,
@@ -250,8 +250,8 @@ const styles = StyleSheet.create({
   },
   todayLetter: {
     color: colors.primaryDark,
-    fontSize: 68,
-    lineHeight: 82,
+    fontSize: 60,
+    lineHeight: 74,
     fontWeight: '900',
     writingDirection: 'rtl',
   },
@@ -261,8 +261,8 @@ const styles = StyleSheet.create({
   },
   todayTitle: {
     color: colors.text,
-    fontSize: 24,
-    lineHeight: 29,
+    fontSize: 22,
+    lineHeight: 27,
     fontWeight: '900',
   },
   todaySubtitle: {
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     borderRadius: radii.pill,
     backgroundColor: colors.primary,
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: spacing.md,
     justifyContent: 'center',
     marginTop: spacing.sm,
   },

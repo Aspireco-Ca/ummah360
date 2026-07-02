@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { ChildProgress, ProgressSettings, ProgressSummary } from '@/types/progress';
 
-const STORAGE_KEY = 'quranGarden.progress.v1';
+const STORAGE_KEY = 'quranGarden.progress.v2';
 
 export interface StorageAdapter {
   getItem(key: string): Promise<string | null>;
