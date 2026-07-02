@@ -263,6 +263,31 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceSoft,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  letterTilePressed: {
+    opacity: 0.82,
+    transform: [{ scale: 0.98 }],
+  },
+  soundBars: {
+    position: 'absolute',
+    left: spacing.sm,
+    top: spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: 3,
+  },
+  soundBar: {
+    width: 4,
+    height: 18,
+    borderRadius: 2,
+    backgroundColor: '#C9B889',
+  },
+  soundBarShort: {
+    height: 11,
+  },
+  soundBarTall: {
+    height: 24,
   },
   bigLetter: {
     fontSize: 92,
@@ -306,6 +331,10 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     writingDirection: 'rtl',
   },
+  audioHint: {
+    ...typography.caption,
+    color: '#BBD6CC',
+  },
   formsStrip: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -327,6 +356,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.xs,
   },
+  loopStepDone: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
   loopNumber: {
     width: 26,
     height: 26,
@@ -338,10 +371,17 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '900',
   },
+  loopNumberDone: {
+    backgroundColor: colors.surfaceSoft,
+    color: colors.primaryDark,
+  },
   loopLabel: {
     ...typography.caption,
     color: colors.text,
     textAlign: 'center',
+  },
+  loopLabelDone: {
+    color: colors.white,
   },
   formChip: {
     flexGrow: 1,
