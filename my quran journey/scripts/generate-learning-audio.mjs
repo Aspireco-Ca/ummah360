@@ -9,40 +9,41 @@ const outputRoot = path.join(appRoot, 'assets', 'audio');
 const apiKey = process.env.ELEVENLABS_API_KEY;
 const voiceId = process.env.ELEVENLABS_VOICE_ID || 'JBFqnCBsd6RMkjVDRZzb';
 const modelId = process.env.ELEVENLABS_MODEL_ID || 'eleven_multilingual_v2';
+const forceRegenerate = process.argv.includes('--force') || process.env.AUDIO_REGENERATE === '1';
 
 if (!apiKey) {
   throw new Error('ELEVENLABS_API_KEY is not set. Audio generation was not run.');
 }
 
 const letterPrompts = [
-  ['letters/alif', 'Alif. Listen, then say Alif.'],
-  ['letters/ba', 'Ba. Listen, then say Ba.'],
-  ['letters/ta', 'Ta. Listen, then say Ta.'],
-  ['letters/tha', 'Tha. Listen, then say Tha.'],
-  ['letters/jeem', 'Jeem. Listen, then say Jeem.'],
-  ['letters/ha', 'Haa. A gentle throat sound. Listen, then say Haa.'],
-  ['letters/kha', 'Kha. A soft throat sound. Listen, then say Kha.'],
-  ['letters/dal', 'Dal. Listen, then say Dal.'],
-  ['letters/dhal', 'Dhal. Listen, then say Dhal.'],
-  ['letters/ra', 'Ra. Listen, then say Ra.'],
-  ['letters/zay', 'Zay. Listen, then say Zay.'],
-  ['letters/seen', 'Seen. Listen, then say Seen.'],
-  ['letters/sheen', 'Sheen. Listen, then say Sheen.'],
-  ['letters/sad', 'Sad. A heavier sound. Listen, then say Sad.'],
-  ['letters/dad', 'Dad. A special Arabic sound. Practice with a teacher too.'],
-  ['letters/tah', 'Tah. A firm sound. Listen, then say Tah.'],
-  ['letters/zah', 'Zah. A heavier sound. Listen, then say Zah.'],
-  ['letters/ayn', 'Ayn. A gentle throat sound. Listen, then try slowly.'],
-  ['letters/ghayn', 'Ghayn. A smooth throat sound. Listen, then try slowly.'],
-  ['letters/fa', 'Fa. Listen, then say Fa.'],
-  ['letters/qaf', 'Qaf. A deep sound. Listen, then say Qaf.'],
-  ['letters/kaf', 'Kaf. Listen, then say Kaf.'],
-  ['letters/lam', 'Lam. Listen, then say Lam.'],
-  ['letters/meem', 'Meem. Listen, then say Meem.'],
-  ['letters/noon', 'Noon. Listen, then say Noon.'],
-  ['letters/haa', 'Haa. Listen, then say Haa.'],
-  ['letters/waw', 'Waw. Listen, then say Waw.'],
-  ['letters/ya', 'Ya. Listen, then say Ya.'],
+  ['letters/alif', 'Arabic letter. Alif. Alif.'],
+  ['letters/ba', 'Arabic letter. Baa. Baa.'],
+  ['letters/ta', 'Arabic letter. Taa. Taa.'],
+  ['letters/tha', 'Arabic letter. Thaa. Thaa.'],
+  ['letters/jeem', 'Arabic letter. Jeem. Jeem.'],
+  ['letters/ha', 'Arabic letter. Haa. Gentle throat sound. Haa.'],
+  ['letters/kha', 'Arabic letter. Khaa. Khaa.'],
+  ['letters/dal', 'Arabic letter. Daal. Daal.'],
+  ['letters/dhal', 'Arabic letter. Dhaal. Dhaal.'],
+  ['letters/ra', 'Arabic letter. Raa. Raa.'],
+  ['letters/zay', 'Arabic letter. Zay. Zay.'],
+  ['letters/seen', 'Arabic letter. Seen. Seen.'],
+  ['letters/sheen', 'Arabic letter. Sheen. Sheen.'],
+  ['letters/sad', 'Arabic letter. Saad. Saad.'],
+  ['letters/dad', 'Arabic letter. Daad. Daad.'],
+  ['letters/tah', 'Arabic letter. Taa heavy. Taa.'],
+  ['letters/zah', 'Arabic letter. Zaa heavy. Zaa.'],
+  ['letters/ayn', 'Arabic letter. Ayn. Ayn.'],
+  ['letters/ghayn', 'Arabic letter. Ghayn. Ghayn.'],
+  ['letters/fa', 'Arabic letter. Faa. Faa.'],
+  ['letters/qaf', 'Arabic letter. Qaaf. Qaaf.'],
+  ['letters/kaf', 'Arabic letter. Kaaf. Kaaf.'],
+  ['letters/lam', 'Arabic letter. Laam. Laam.'],
+  ['letters/meem', 'Arabic letter. Meem. Meem.'],
+  ['letters/noon', 'Arabic letter. Noon. Noon.'],
+  ['letters/haa', 'Arabic letter. Haa. Haa.'],
+  ['letters/waw', 'Arabic letter. Waaw. Waaw.'],
+  ['letters/ya', 'Arabic letter. Yaa. Yaa.'],
 ];
 
 const practiceWordPrompts = [
@@ -111,7 +112,7 @@ for (const [key, text] of audioItems) {
   const filePath = path.join(outputRoot, `${key}.mp3`);
   await mkdir(path.dirname(filePath), { recursive: true });
 
-  if (await exists(filePath)) {
+  if (!forceRegenerate && await exists(filePath)) {
     skipped += 1;
     console.log(`skip ${key}`);
     continue;

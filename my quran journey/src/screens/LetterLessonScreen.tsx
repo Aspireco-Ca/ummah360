@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, Vibration } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AudioButton } from '@/components/AudioButton';
 import { Screen } from '@/components/Screen';
@@ -8,17 +8,24 @@ import { TraceCanvas } from '@/components/TraceCanvas';
 import { arabicLetters, getLetterById } from '@/data/arabicLetters';
 import { translate } from '@/i18n';
 import type { RootStackParamList } from '@/navigation/types';
-import { playFeedbackAudio } from '@/services/audioService';
+import { playFeedbackAudio, playLetterAudio } from '@/services/audioService';
 import { useProgress } from '@/store/progressStore';
 import { colors, radii, spacing, typography } from '@/theme/theme';
 import { checkLetterAnswer, checkTextAnswer } from '@/utils/gameLogic';
 import { shuffle, takeRandom } from '@/utils/randomize';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'LetterLesson'>;
+type LessonStep = 'listen' | 'say' | 'trace' | 'find';
 
 export const LetterLessonScreen = ({ navigation, route }: Props) => {
   const { progress, completeLetter, practiceLetter } = useProgress();
   const [feedback, setFeedback] = useState('');
+  const [completedSteps, setCompletedSteps] = useState<Record<LessonStep, boolean>>({
+    listen: false,
+    say: false,
+    trace: false,
+    find: false,
+  });
   const letter = getLetterById(route.params.letterId) ?? arabicLetters[0];
   const t = (key: Parameters<typeof translate>[0]) => translate(key, progress.settings.language);
   const learned = progress.lettersLearned.includes(letter.id);
@@ -48,6 +55,30 @@ export const LetterLessonScreen = ({ navigation, route }: Props) => {
     [t('middle'), letter.middleForm],
     [t('end'), letter.endForm],
   ];
+  const loopItems: Array<{ id: LessonStep; step: string; label: string }> = [
+    { id: 'listen', step: '1', label: 'Listen' },
+    { id: 'say', step: '2', label: 'Say' },
+    { id: 'trace', step: '3', label: 'Trace' },
+    { id: 'find', step: '4', label: 'Find' },
+  ];
+
+  const markStep = (step: LessonStep) => {
+    setCompletedSteps((current) => ({ ...current, [step]: true }));
+  };
+
+  const playLetter = async () => {
+    if (!progress.settings.audioEnabled) {
+      return;
+    }
+
+    try {
+      Vibration.vibrate(12);
+      await playLetterAudio(letter.audioKey);
+      markStep('listen');
+    } catch (error) {
+      console.warn('[letter audio failed]', letter.audioKey, error);
+    }
+  };
 
   const answerLetter = async (letterId: string) => {
     const result = checkLetterAnswer(letterId, letter.id);
@@ -57,6 +88,7 @@ export const LetterLessonScreen = ({ navigation, route }: Props) => {
     }
 
     if (result.correct) {
+      markStep('find');
       await practiceLetter(letter.id);
     }
   };
@@ -69,12 +101,14 @@ export const LetterLessonScreen = ({ navigation, route }: Props) => {
     }
 
     if (result.correct) {
+      markStep('say');
       await practiceLetter(letter.id);
     }
   };
 
   const markComplete = async () => {
     await completeLetter(letter.id);
+    setCompletedSteps({ listen: true, say: true, trace: true, find: true });
     setFeedback(t('beautifulEffort'));
     if (canPlayFeedback) {
       void playFeedbackAudio('beautifulEffort');
@@ -84,9 +118,21 @@ export const LetterLessonScreen = ({ navigation, route }: Props) => {
   return (
     <Screen>
       <View style={styles.lessonHero}>
-        <View style={styles.letterTile}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`Hear ${letter.nameEnglish}`}
+          style={({ pressed }) => [styles.letterTile, pressed && styles.letterTilePressed]}
+          onPress={() => {
+            void playLetter();
+          }}
+        >
+          <View style={styles.soundBars}>
+            <View style={[styles.soundBar, styles.soundBarShort]} />
+            <View style={styles.soundBar} />
+            <View style={[styles.soundBar, styles.soundBarTall]} />
+          </View>
           <Text style={styles.bigLetter}>{letter.arabic}</Text>
-        </View>
+        </Pressable>
         <View style={styles.heroCopy}>
           <View style={styles.lessonMetaRow}>
             <Text style={styles.lessonMeta}>Station {letter.unlockOrder}</Text>
@@ -94,7 +140,13 @@ export const LetterLessonScreen = ({ navigation, route }: Props) => {
           </View>
           <Text style={styles.letterName}>{letter.nameEnglish}</Text>
           <Text style={styles.letterArabicName}>{letter.nameArabic}</Text>
-          <AudioButton label={t('playAudio')} audioKey={letter.audioKey} kind="letter" />
+          <Text style={styles.audioHint}>Tap the letter to hear its sound.</Text>
+          <AudioButton
+            label={t('playAudio')}
+            audioKey={letter.audioKey}
+            kind="letter"
+            onPlayed={() => markStep('listen')}
+          />
         </View>
       </View>
 
@@ -109,15 +161,10 @@ export const LetterLessonScreen = ({ navigation, route }: Props) => {
 
       <SectionPanel title="Learning loop" caption="A calm routine for memory: hear it, say it, draw it, find it." tone="cool">
         <View style={styles.loopRow}>
-          {[
-            ['1', 'Listen'],
-            ['2', 'Say'],
-            ['3', 'Trace'],
-            ['4', 'Find'],
-          ].map(([step, label]) => (
-            <View key={step} style={styles.loopStep}>
-              <Text style={styles.loopNumber}>{step}</Text>
-              <Text style={styles.loopLabel}>{label}</Text>
+          {loopItems.map(({ id, step, label }) => (
+            <View key={id} style={[styles.loopStep, completedSteps[id] && styles.loopStepDone]}>
+              <Text style={[styles.loopNumber, completedSteps[id] && styles.loopNumberDone]}>{step}</Text>
+              <Text style={[styles.loopLabel, completedSteps[id] && styles.loopLabelDone]}>{label}</Text>
             </View>
           ))}
         </View>
@@ -141,6 +188,8 @@ export const LetterLessonScreen = ({ navigation, route }: Props) => {
           prompt={t('tracePrompt')}
           onTraceComplete={() => {
             void practiceLetter(letter.id);
+            markStep('trace');
+            Vibration.vibrate(10);
             if (canPlayFeedback) {
               void playFeedbackAudio('beautifulEffort');
             }

@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
 import { colors, radii, spacing, typography } from '@/theme/theme';
 import { hasAudio, playLetterAudio, playPracticeWordAudio, playSurahAyahAudio } from '@/services/audioService';
@@ -8,10 +9,13 @@ interface AudioButtonProps {
   audioKey: string;
   kind: 'letter' | 'practiceWord' | 'surahAyah';
   disabled?: boolean;
+  onPlayed?: () => void;
 }
 
-export const AudioButton = ({ label, audioKey, kind, disabled = false }: AudioButtonProps) => {
+export const AudioButton = ({ label, audioKey, kind, disabled = false, onPlayed }: AudioButtonProps) => {
   const { progress } = useProgress();
+  const [isPlaying, setIsPlaying] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const unavailable = kind === 'surahAyah' || !hasAudio(audioKey);
   const isDisabled = disabled || unavailable || !progress.settings.audioEnabled;
 
@@ -20,14 +24,32 @@ export const AudioButton = ({ label, audioKey, kind, disabled = false }: AudioBu
       return;
     }
 
-    if (kind === 'letter') {
-      await playLetterAudio(audioKey);
-    } else if (kind === 'practiceWord') {
-      await playPracticeWordAudio(audioKey);
-    } else {
-      await playSurahAyahAudio(audioKey);
+    try {
+      if (kind === 'letter') {
+        await playLetterAudio(audioKey);
+      } else if (kind === 'practiceWord') {
+        await playPracticeWordAudio(audioKey);
+      } else {
+        await playSurahAyahAudio(audioKey);
+      }
+
+      onPlayed?.();
+      setIsPlaying(true);
+
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+
+      timerRef.current = setTimeout(() => {
+        setIsPlaying(false);
+      }, 1400);
+    } catch (error) {
+      setIsPlaying(false);
+      console.warn('[audio playback failed]', audioKey, error);
     }
   };
+
+  const visibleLabel = isPlaying ? 'Playing' : label;
 
   return (
     <Pressable
@@ -39,7 +61,7 @@ export const AudioButton = ({ label, audioKey, kind, disabled = false }: AudioBu
       style={({ pressed }) => [styles.button, isDisabled && styles.disabled, pressed && !isDisabled && styles.pressed]}
     >
       <Text style={styles.symbol}>♪</Text>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={styles.label}>{visibleLabel}</Text>
     </Pressable>
   );
 };
